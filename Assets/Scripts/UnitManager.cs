@@ -1,18 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UnitManager : MonoBehaviour {
 
 	public Unit[] unitPrefabs;
 
+	private List<Unit> units = new List<Unit>();
+
 	// Use this for initialization
 	void Start () {
-	
+		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		Debug.Log (units[0]);
+		if (units[0]) {
+			units[0].transform.position = new Vector3(
+				units[0].transform.position.x,
+				units[0].transform.position.y,
+				units[0].transform.position.z + units[0].transform.localScale.z * 0.9f
+			);
+		}
 	}
 
 	public void createUnit(Node node, float scale) {
@@ -28,5 +38,6 @@ public class UnitManager : MonoBehaviour {
 			node.transform.position.y + node.transform.localScale.y / 2,
 			node.transform.position.z
 		);
+		units.Add (unit);
 	}
 }
