@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GridManager : MonoBehaviour {
 
+	public UnitManager unitManager;
 	public Node cube;
 	public Material[] materials;
 	public Vector3 initialPosition;
@@ -17,10 +18,12 @@ public class GridManager : MonoBehaviour {
 	private int xSize;
 	private int zSize;
 	private float scale = 0.025f;
+	private float unitScale;
 
 	// Use this for initialization
 	void Start () {
 		GenerateGrid ();
+		unitManager.createUnit (grid[0], unitScale);
 	}
 
 	void GenerateGrid() {
@@ -55,18 +58,22 @@ public class GridManager : MonoBehaviour {
 		case Size.small:
 			scale = sideLength / 8;
 			xSize = zSize = 8;
+			unitScale = 2.0f;
 			break;
 		case Size.medium:
 			scale = sideLength / 16;
 			xSize = zSize = 16;
+			unitScale = 1.0f;
 			break;
 		case Size.large:
 			scale = sideLength / 32;
 			xSize = zSize = 32;
+			unitScale = 0.5f;
 			break;
 		default:
 			scale = sideLength / 8;
 			xSize = zSize = 8;
+			unitScale = 1.0f;
 			break;
 		}
 		initialPosition.x += scale / 2;
