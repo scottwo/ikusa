@@ -85,9 +85,15 @@ public class GridManager : MonoBehaviour {
 	
 	}
 
-	Node findNodeByCord(int x, int z) {
+	public Node findNodeByCord(int x, int z) {
 		Node foundNode = grid[(z * xSize) + (x - 1)];
 		return foundNode;
 	}
+
+//    Node findNodeByCordFloat(Vector3 pos)
+//    {
+//        Node foundNode = findNodeByCord();
+//        return foundNode;
+//    }
 
 }

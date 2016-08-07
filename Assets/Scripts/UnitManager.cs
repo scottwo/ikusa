@@ -5,8 +5,10 @@ using System.Collections.Generic;
 public class UnitManager : MonoBehaviour {
 
 	public Unit[] unitPrefabs;
+	public GridManager gridManager;
 
 	private List<Unit> units = new List<Unit>();
+	private List<MovementObj> movingUnits = new List<MovementObj>();
 
 	// Use this for initialization
 	void Start () {
@@ -15,13 +17,42 @@ public class UnitManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.Log (units[0]);
-		if (units[0]) {
-			units[0].transform.position = new Vector3(
-				units[0].transform.position.x,
-				units[0].transform.position.y,
-				units[0].transform.position.z + units[0].transform.localScale.z * 0.9f
-			);
+		if (movingUnits.Count > 0) {
+			for (int i = 0; i < movingUnits.Count; i++) {
+				if (movingUnits [i].unit.transform.position.x == movingUnits [i].destination.x) {
+					if (movingUnits [i].unit.transform.position.z == movingUnits [i].destination.y) {
+						movingUnits.Remove (movingUnits [i]);
+					} else {
+						if (movingUnits [i].unit.transform.position.x > movingUnits [i].destination.x) {
+							movingUnits [i].unit.transform.position = new Vector3(
+								movingUnits [i].unit.transform.position.x,
+								movingUnits [i].unit.transform.position.y,
+								movingUnits [i].unit.transform.position.z + 0.01f
+							);
+						} else {
+							movingUnits [i].unit.transform.position = new Vector3(
+								movingUnits [i].unit.transform.position.x,
+								movingUnits [i].unit.transform.position.y,
+								movingUnits [i].unit.transform.position.z + 0.01f
+							);
+						}
+					}
+				} else {
+					if(movingUnits [i].unit.transform.position.x > movingUnits [i].destination.x) {
+						movingUnits [i].unit.transform.position = new Vector3(
+							movingUnits [i].unit.transform.position.x,
+							movingUnits [i].unit.transform.position.y,
+							movingUnits [i].unit.transform.position.z + 0.01f
+						);
+					} else {
+						movingUnits [i].unit.transform.position = new Vector3(
+							movingUnits [i].unit.transform.position.x,
+							movingUnits [i].unit.transform.position.y,
+							movingUnits [i].unit.transform.position.z + 0.01f
+						);
+					}
+				}
+			}
 		}
 	}
 
@@ -39,5 +70,20 @@ public class UnitManager : MonoBehaviour {
 			node.transform.position.z
 		);
 		units.Add (unit);
+		MoveUnit(unit, gridManager.findNodeByCord(5, 5));
 	}
+
+	public void MoveUnit(Unit unit, Node node) {
+		float destinationX = node.transform.position.x;
+		float destinationZ = node.transform.position.z;
+		MovementObj movementVector = new MovementObj ();
+		movementVector.unit = unit;
+		movementVector.destination = new Vector2 (destinationX, destinationZ);
+		movingUnits.Add (movementVector);
+    }
+}
+
+public class MovementObj {
+	public Unit unit;
+	public Vector2 destination;
 }
