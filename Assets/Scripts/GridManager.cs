@@ -6,6 +6,7 @@ public class GridManager : MonoBehaviour {
 	public UnitManager unitManager;
 	public Node cube;
 	public Material[] materials;
+	public Material selectedMaterial;
 	public Vector3 initialPosition;
 	public enum Size
 	{
@@ -24,7 +25,6 @@ public class GridManager : MonoBehaviour {
 	void Start () {
 		GenerateGrid ();
 		unitManager.createUnit (grid[0], unitScale);
-		unitManager.createUnit (grid[4], unitScale);
 	}
 
 	void GenerateGrid() {
@@ -37,12 +37,13 @@ public class GridManager : MonoBehaviour {
 				grid [v] = Instantiate (cube);
 				grid [v].transform.position = new Vector3 (
 					initialPosition.x + (j * scale), 
-					initialPosition.y + (scale * randomY / 2), 
+					initialPosition.y + (grid [v].transform.localScale.y * randomY / 2), 
 					initialPosition.z + (i * scale)
 				);
-				grid [v].transform.localScale = new Vector3 (scale, scale * randomY, scale);
+				grid [v].transform.localScale = new Vector3 (scale, grid [v].transform.localScale.y * randomY, scale);
 				grid [v].coords = new Vector2 (j, i);
 				grid [v].transform.parent = gameObject.transform;
+				grid [v].gridManager = this;
 				if (randomY < 1.05f) {
 					grid [v].GetComponent<MeshRenderer> ().material = materials [2];
 				} else if (randomY < 1.12f) {
@@ -87,14 +88,25 @@ public class GridManager : MonoBehaviour {
 	}
 
 	public Node findNodeByCord(int x, int z) {
-		Node foundNode = grid[(z * xSize) + (x - 1)];
-		return foundNode;
+		int index = ((z - 1) * xSize) + x;
+		if (index < grid.Length) {
+			Node foundNode = grid [index];
+			return foundNode;
+		} else {
+			return grid [0];
+		}
 	}
 
-//    Node findNodeByCordFloat(Vector3 pos)
-//    {
-//        Node foundNode = findNodeByCord();
-//        return foundNode;
-//    }
+    public Node findNodeByCordFloat(Vector3 pos)
+    {
+		float x = pos.x;
+		float z = pos.z;
+		float minX = initialPosition.x - (scale / 2);
+		float minZ = initialPosition.z - (scale / 2);
+		int xCoord = (int) (( x - minX) / scale) + 1;
+		int zCoord = (int) (( z - minZ) / scale) + 1;
+		Node foundNode = findNodeByCord(xCoord, zCoord);
+        return foundNode;
+    }
 
 }
