@@ -24,6 +24,7 @@ public class GridManager : MonoBehaviour {
 	void Start () {
 		GenerateGrid ();
 		unitManager.createUnit (grid[0], unitScale);
+		unitManager.createUnit (grid[4], unitScale);
 	}
 
 	void GenerateGrid() {
