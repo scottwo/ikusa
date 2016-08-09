@@ -23,37 +23,37 @@ public class UnitManager : MonoBehaviour {
 	void Update () {
 		if (movingUnits.Count > 0) {
 			for (int i = 0; i < movingUnits.Count; i++) {
-				if (Mathf.Abs(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x) < movingUnits [i].unit.transform.localScale.z * 4) {
-					if (Mathf.Abs(movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y) < movingUnits [i].unit.transform.localScale.z * 4) {
+				if (Mathf.Abs(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x) < movingUnits [i].unit.transform.localScale.z * 10) {
+					if (Mathf.Abs(movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y) < movingUnits [i].unit.transform.localScale.z * 10) {
 						movingUnits.Remove (movingUnits [i]);
 					} else {
-						if (movingUnits [i].unit.transform.position.z > movingUnits [i].destination.y) {
+						if (movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y > movingUnits [i].unit.transform.localScale.z * 10){
 							movingUnits [i].unit.transform.position = new Vector3(
 								movingUnits [i].unit.transform.position.x,
 								movingUnits [i].unit.transform.position.y,
-								movingUnits [i].unit.transform.position.z - movingUnits [i].unit.transform.localScale.z * 4
+								movingUnits [i].unit.transform.position.z - movingUnits [i].unit.transform.localScale.z * 10
 							);
 							movingUnits [i].unit.transform.rotation = Quaternion.Euler (0, 180, 0);
 						} else {
 							movingUnits [i].unit.transform.position = new Vector3(
 								movingUnits [i].unit.transform.position.x,
 								movingUnits [i].unit.transform.position.y,
-								movingUnits [i].unit.transform.position.z + movingUnits [i].unit.transform.localScale.z * 4
+								movingUnits [i].unit.transform.position.z + movingUnits [i].unit.transform.localScale.z * 10
 							);
 							movingUnits [i].unit.transform.rotation = Quaternion.Euler (0, 0, 0);
 						}
 					}
 				} else {
-					if(Mathf.Abs(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x) < movingUnits [i].unit.transform.localScale.z * 4) {
+					if(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x > movingUnits [i].unit.transform.localScale.z * 10) {
 						movingUnits [i].unit.transform.position = new Vector3(
-							movingUnits [i].unit.transform.position.x - movingUnits [i].unit.transform.localScale.z * 4,
+							movingUnits [i].unit.transform.position.x - movingUnits [i].unit.transform.localScale.z * 10,
 							movingUnits [i].unit.transform.position.y,
 							movingUnits [i].unit.transform.position.z
 						);
 						movingUnits [i].unit.transform.rotation = Quaternion.Euler (0, 270, 0);
 					} else {
 						movingUnits [i].unit.transform.position = new Vector3(
-							movingUnits [i].unit.transform.position.x + movingUnits [i].unit.transform.localScale.z * 4,
+							movingUnits [i].unit.transform.position.x + movingUnits [i].unit.transform.localScale.z * 10,
 							movingUnits [i].unit.transform.position.y,
 							movingUnits [i].unit.transform.position.z
 						);
