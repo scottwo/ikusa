@@ -89,7 +89,7 @@ public class GridManager : MonoBehaviour {
 
 	public Node findNodeByCord(int x, int z) {
 		int index = ((z - 1) * xSize) + x;
-		if (index < grid.Length) {
+		if (index < grid.Length && index > -1) {
 			Node foundNode = grid [index];
 			return foundNode;
 		} else {

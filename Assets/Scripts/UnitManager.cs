@@ -65,7 +65,9 @@ public class UnitManager : MonoBehaviour {
 		if (selectedController != null) {
 //			Debug.Log ("x: " + selectedController.transform.position.x + ", z: " + selectedController.transform.position.z);
 			Node node = gridManager.findNodeByCordFloat (selectedController.transform.position);
-			node.hoverOver = true;
+			if (!node.hoverOver) {
+				node.hoverOver = true;
+			}
 		}
 	}
 

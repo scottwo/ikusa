@@ -8,18 +8,22 @@ public class Node : MonoBehaviour {
 	public bool hoverOver;
 
 	private Material originalMaterial;
+	private Material currentMaterial;
+	private Renderer rendar;
 
 	// Use this for initialization
 	void Start () {
-		originalMaterial = gameObject.GetComponent<Renderer> ().material;	
+		rendar = gameObject.GetComponent<Renderer> ();
+		originalMaterial = rendar.material;	
+		currentMaterial = originalMaterial;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (hoverOver) {
-			gameObject.GetComponent<Renderer> ().material = gridManager.selectedMaterial;
-		} else {
-			gameObject.GetComponent<Renderer> ().material = originalMaterial;
+		if (hoverOver && currentMaterial == originalMaterial) {
+			rendar.material = gridManager.selectedMaterial;
+		} else if(!hoverOver && currentMaterial != originalMaterial) {
+			rendar.material = originalMaterial;
 		}
 	}
 }

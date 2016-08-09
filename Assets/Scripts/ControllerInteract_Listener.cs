@@ -48,8 +48,6 @@ public class ControllerInteract_Listener : MonoBehaviour {
 		} else {
 			unitManager.DeselectUnit ();
 		}
-		Debug.Log (this.transform.position);
-		Debug.Log (gameObject.transform.position);
 	}
 
 	private void TriggerWasReleased(object sender, ControllerInteractionEventArgs e) {
