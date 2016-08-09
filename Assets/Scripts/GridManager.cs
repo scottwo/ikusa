@@ -13,6 +13,8 @@ public class GridManager : MonoBehaviour {
 		small, medium, large
 	};
 	public Size mapSize;
+	public Node hoveringNode;
+	public Node[] path;
 
 	private Node[] grid;
 	private float sideLength = 1.2f;
@@ -84,7 +86,23 @@ public class GridManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-	
+		DrawPath ();
+	}
+
+	void DrawPath() {
+		//Only draw path if user is hovering over a node has selected a unit.
+		if (hoveringNode != null && unitManager.selectedUnit != null) {
+			Node start = findNodeByCordFloat (unitManager.selectedUnit.transform);
+			int xDiff = Mathf.Abs (hoveringNode.coords.x - start.coords.x);
+			int zDiff = Mathf.Abs (hoveringNode.coords.y - start.coords.y);
+			path = new Node[xDiff + zDiff];
+			for (int i = 1; i = xDiff; i++) {
+				path [i] = findNodeByCord (start.coords.x + i, start.coords.y);
+			}
+			for (int j = 1; j = xDiff + zDiff; j++) {
+				path [j] = findNodeByCord (start.coords.x + xDiff, start.coords.y + j);
+			}
+		}
 	}
 
 	public Node findNodeByCord(int x, int z) {

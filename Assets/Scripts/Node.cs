@@ -7,23 +7,34 @@ public class Node : MonoBehaviour {
 	public GridManager gridManager;
 	public bool hoverOver;
 
-	private Material originalMaterial;
-	private Material currentMaterial;
-	private Renderer rendar;
+	private GameObject sphere;
 
 	// Use this for initialization
 	void Start () {
-		rendar = gameObject.GetComponent<Renderer> ();
-		originalMaterial = rendar.material;	
-		currentMaterial = originalMaterial;
+		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (hoverOver && currentMaterial == originalMaterial) {
-			rendar.material = gridManager.selectedMaterial;
-		} else if(!hoverOver && currentMaterial != originalMaterial) {
-			rendar.material = originalMaterial;
+		if (gridManager.path) {
+			gridManager.hoveringNode = gameObject;
+		} else if(!hoverOver) {
+			gridManager.hoveringNode = null;
 		}
+	}
+
+	void ShowIndicator() {
+		sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+		sphere.transform.position = new Vector3 (
+			gameObject.transform.position.x,
+			gameObject.transform.position.y + gameObject.transform.localScale.y * 2,
+			gameObject.transform.position.z
+		);
+		sphere.transform.localScale = new Vector3 (
+			gameObject.transform.localScale.y / 2,
+			gameObject.transform.localScale.y / 2,
+			gameObject.transform.localScale.y / 2
+		);
+		sphere.transform.parent = gameObject.transform;
 	}
 }
