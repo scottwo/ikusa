@@ -5,6 +5,7 @@ using VRTK;
 public class ControllerInteract_Listener : MonoBehaviour {
 
 	public UnitManager unitManager;
+	public GridManager gridManager;
 
 	// Use this for initialization
 	void Start () {
@@ -23,7 +24,14 @@ public class ControllerInteract_Listener : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		Node hoveringNode = gridManager.findNodeByCordFloat (this.transform.position);
+		if (this.name.Contains ("right")) {
+			if (hoveringNode != null) {
+				gridManager.hoveringNode = hoveringNode;
+			} else {
+				gridManager.hoveringNode = null;
+			}
+		}
 	}
 
 	private void SomethingWasTouched(object sender, ObjectInteractEventArgs e) {

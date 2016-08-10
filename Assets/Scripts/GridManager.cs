@@ -86,27 +86,50 @@ public class GridManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		DrawPath ();
+		//Only draw path if user is hovering over a node and has selected a unit.
+		if (hoveringNode != null && unitManager.selectedUnit != null) {
+			RemovePath ();
+			DrawPath ();
+		}
 	}
 
-	void DrawPath() {
-		//Only draw path if user is hovering over a node has selected a unit.
-		if (hoveringNode != null && unitManager.selectedUnit != null) {
-			Node start = findNodeByCordFloat (unitManager.selectedUnit.transform);
-			int xDiff = Mathf.Abs (hoveringNode.coords.x - start.coords.x);
-			int zDiff = Mathf.Abs (hoveringNode.coords.y - start.coords.y);
-			path = new Node[xDiff + zDiff];
-			for (int i = 1; i = xDiff; i++) {
-				path [i] = findNodeByCord (start.coords.x + i, start.coords.y);
+	public void RemovePath() {
+		if (path != null) {
+			for (int k = 0; k < path.Length; k++) {
+				path [k].HideIndicator ();
 			}
-			for (int j = 1; j = xDiff + zDiff; j++) {
-				path [j] = findNodeByCord (start.coords.x + xDiff, start.coords.y + j);
+		}
+		path = null;
+	}
+
+	public void DrawPath() {
+		Node start = unitManager.selectedUnit.currentNode;
+		int xDiff = Mathf.Abs ((int)hoveringNode.coords.x - (int)start.coords.x);
+		int zDiff = Mathf.Abs ((int)hoveringNode.coords.y - (int)start.coords.y);
+		int xDirection = hoveringNode.coords.x - start.coords.x > 0 ? 1 : -1;
+		int zDirection = hoveringNode.coords.y - start.coords.y > 0 ? 1 : -1;
+
+		Node[] tempPath = new Node[xDiff + zDiff];
+		for (int i = 1; i <= xDiff; i++) {
+			Node foundNode = findNodeByCord ((int)start.coords.x + i * xDirection, (int)start.coords.y);
+			int index = i - 1;
+			tempPath [index] = foundNode;
+		}
+		for (int j = 1; j <= zDiff; j++) {
+			Node foundNode = findNodeByCord ((int)start.coords.x + xDiff * xDirection, (int)start.coords.y + j * zDirection);
+			int index = xDiff + j - 1;
+			tempPath [index] = foundNode;
+		}
+		if (tempPath != path) {
+			path = tempPath;
+			for (int k = 0; k < path.Length; k++) {
+				path [k].ShowIndicator ();
 			}
 		}
 	}
 
 	public Node findNodeByCord(int x, int z) {
-		int index = ((z - 1) * xSize) + x;
+		int index = (z * xSize) + x;
 		if (index < grid.Length && index > -1) {
 			Node foundNode = grid [index];
 			return foundNode;

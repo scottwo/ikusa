@@ -26,6 +26,7 @@ public class UnitManager : MonoBehaviour {
 				if (Mathf.Abs(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x) < movingUnits [i].unit.transform.localScale.z * 10) {
 					if (Mathf.Abs(movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y) < movingUnits [i].unit.transform.localScale.z * 10) {
 						movingUnits.Remove (movingUnits [i]);
+						gridManager.RemovePath ();
 					} else {
 						if (movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y > movingUnits [i].unit.transform.localScale.z * 10){
 							movingUnits [i].unit.transform.position = new Vector3(
@@ -63,7 +64,6 @@ public class UnitManager : MonoBehaviour {
 			}
 		}
 		if (selectedController != null) {
-//			Debug.Log ("x: " + selectedController.transform.position.x + ", z: " + selectedController.transform.position.z);
 			Node node = gridManager.findNodeByCordFloat (selectedController.transform.position);
 			if (!node.hoverOver) {
 				node.hoverOver = true;
@@ -84,6 +84,7 @@ public class UnitManager : MonoBehaviour {
 			node.transform.position.y + node.transform.localScale.y / 2,
 			node.transform.position.z
 		);
+		unit.currentNode = node;
 		units.Add (unit);
 	}
 
@@ -94,6 +95,7 @@ public class UnitManager : MonoBehaviour {
 		movementVector.unit = unit;
 		movementVector.destination = new Vector2 (destinationX, destinationZ);
 		movingUnits.Add (movementVector);
+		unit.currentNode = node;
     }
 
 	public void MoveUnitByXZ(Unit unit, Vector3 position) {
@@ -113,6 +115,7 @@ public class UnitManager : MonoBehaviour {
 			selectedUnit.isSelected = false;
 			selectedUnit = null;
 			selectedController = null;
+			gridManager.RemovePath ();
 		}
 	}
 }

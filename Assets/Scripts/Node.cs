@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class Node : MonoBehaviour {
@@ -16,14 +17,10 @@ public class Node : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (gridManager.path) {
-			gridManager.hoveringNode = gameObject;
-		} else if(!hoverOver) {
-			gridManager.hoveringNode = null;
-		}
+
 	}
 
-	void ShowIndicator() {
+	public void ShowIndicator() {
 		sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		sphere.transform.position = new Vector3 (
 			gameObject.transform.position.x,
@@ -31,10 +28,15 @@ public class Node : MonoBehaviour {
 			gameObject.transform.position.z
 		);
 		sphere.transform.localScale = new Vector3 (
-			gameObject.transform.localScale.y / 2,
-			gameObject.transform.localScale.y / 2,
-			gameObject.transform.localScale.y / 2
+			gameObject.transform.localScale.y / 3,
+			gameObject.transform.localScale.y / 3,
+			gameObject.transform.localScale.y / 3
 		);
 		sphere.transform.parent = gameObject.transform;
+	}
+
+	public void HideIndicator() {
+		Destroy (sphere);
+		sphere = null;
 	}
 }

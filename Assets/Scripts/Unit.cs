@@ -5,6 +5,7 @@ public class Unit : MonoBehaviour {
 
 	public bool isBeingTouched;
 	public bool isSelected;
+	public Node currentNode;
 
 	private GameObject cube;
 	private Color cubeSelectedColor = Color.red;
