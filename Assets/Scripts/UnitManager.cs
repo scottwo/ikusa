@@ -21,54 +21,59 @@ public class UnitManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (movingUnits.Count > 0) {
-			for (int i = 0; i < movingUnits.Count; i++) {
-				if (Mathf.Abs(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x) < movingUnits [i].unit.transform.localScale.z * 10) {
-					if (Mathf.Abs(movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y) < movingUnits [i].unit.transform.localScale.z * 10) {
-						movingUnits.Remove (movingUnits [i]);
-						gridManager.RemovePath ();
-					} else {
-						if (movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y > movingUnits [i].unit.transform.localScale.z * 10){
-							movingUnits [i].unit.transform.position = new Vector3(
-								movingUnits [i].unit.transform.position.x,
-								movingUnits [i].unit.transform.position.y,
-								movingUnits [i].unit.transform.position.z - movingUnits [i].unit.transform.localScale.z * 10
-							);
-							movingUnits [i].unit.transform.rotation = Quaternion.Euler (0, 180, 0);
-						} else {
-							movingUnits [i].unit.transform.position = new Vector3(
-								movingUnits [i].unit.transform.position.x,
-								movingUnits [i].unit.transform.position.y,
-								movingUnits [i].unit.transform.position.z + movingUnits [i].unit.transform.localScale.z * 10
-							);
-							movingUnits [i].unit.transform.rotation = Quaternion.Euler (0, 0, 0);
-						}
-					}
-				} else {
-					if(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x > movingUnits [i].unit.transform.localScale.z * 10) {
-						movingUnits [i].unit.transform.position = new Vector3(
-							movingUnits [i].unit.transform.position.x - movingUnits [i].unit.transform.localScale.z * 10,
-							movingUnits [i].unit.transform.position.y,
-							movingUnits [i].unit.transform.position.z
-						);
-						movingUnits [i].unit.transform.rotation = Quaternion.Euler (0, 270, 0);
-					} else {
-						movingUnits [i].unit.transform.position = new Vector3(
-							movingUnits [i].unit.transform.position.x + movingUnits [i].unit.transform.localScale.z * 10,
-							movingUnits [i].unit.transform.position.y,
-							movingUnits [i].unit.transform.position.z
-						);
-						movingUnits [i].unit.transform.rotation = Quaternion.Euler (0, 90, 0);
-					}
-				}
-			}
-		}
+		ProcessMovingUnits ();
+
 		if (selectedController != null) {
 			Node node = gridManager.findNodeByCordFloat (selectedController.transform.position);
 			if (!node.hoverOver) {
 				node.hoverOver = true;
 			}
 		}
+	}
+
+	void ProcessMovingUnits() {
+		if (movingUnits.Count > 0) {
+			for (int i = 0; i < movingUnits.Count; i++) {
+				if (Mathf.Abs(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x) < movingUnits [i].unit.transform.localScale.z * 0.1f) {
+					if (Mathf.Abs(movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y) < movingUnits [i].unit.transform.localScale.z * 0.1f) {
+						movingUnits [i].unit.animator.SetBool ("Run", false);
+						movingUnits.Remove (movingUnits [i]);
+						gridManager.RemovePath ();
+					} else {
+						if (movingUnits [i].unit.transform.position.z - movingUnits [i].destination.y > movingUnits [i].unit.transform.localScale.z * 0.1f){
+							UpdateUnitMove (movingUnits[i].unit, "z", -1, 180);
+						} else {
+							UpdateUnitMove (movingUnits[i].unit, "z", 1, 0);
+						}
+					}
+				} else {
+					if(movingUnits [i].unit.transform.position.x - movingUnits [i].destination.x > movingUnits [i].unit.transform.localScale.z * 0.1f) {
+						UpdateUnitMove (movingUnits[i].unit, "x", -1, 270);
+					} else {
+						UpdateUnitMove (movingUnits[i].unit, "x", 1, 90);
+					}
+				}
+			}
+		}
+	}
+
+	void UpdateUnitMove(Unit unit, string coord, int posneg, int direction) {
+		Vector3 movement = Vector3.up;
+		if (coord == "x") {
+			movement = new Vector3 (
+				unit.transform.position.x + unit.transform.localScale.z * 0.1f * posneg,
+                unit.transform.position.y,
+                unit.transform.position.z
+           );
+		} else {
+			movement = new Vector3 (
+				unit.transform.position.x,
+				unit.transform.position.y,
+				unit.transform.position.z + unit.transform.localScale.z * 0.1f * posneg
+			);
+		}
+		unit.transform.position = movement;
+		unit.transform.rotation = Quaternion.Euler (0, direction, 0);
 	}
 
 	public void createUnit(Node node, float scale) {
@@ -96,6 +101,8 @@ public class UnitManager : MonoBehaviour {
 		movementVector.destination = new Vector2 (destinationX, destinationZ);
 		movingUnits.Add (movementVector);
 		unit.currentNode = node;
+		unit.animator.SetBool ("Run", true);
+		DeselectUnit ();
     }
 
 	public void MoveUnitByXZ(Unit unit, Vector3 position) {
@@ -104,15 +111,31 @@ public class UnitManager : MonoBehaviour {
 		DeselectUnit ();
 	}
 
+	public void TouchUnit(Unit unit) {
+		unit.isBeingTouched = true;
+		unit.ShowTouchedIndicator ();
+		touchedUnit = unit;
+	}
+
+	public void UntouchUnit(){
+		if (selectedUnit != touchedUnit) {
+			touchedUnit.HideIndicator ();
+		}
+		touchedUnit.isBeingTouched = false;
+		touchedUnit = null;
+	}
+
 	public void SelectUnit(Unit unit, GameObject controller) {
 		selectedUnit = unit;
 		unit.isSelected = true;
 		selectedController = controller;
+		unit.ShowSelectedIndicator ();
 	}
 
 	public void DeselectUnit() {
 		if (selectedUnit != null) {
 			selectedUnit.isSelected = false;
+			selectedUnit.HideIndicator ();
 			selectedUnit = null;
 			selectedController = null;
 			gridManager.RemovePath ();

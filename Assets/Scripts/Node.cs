@@ -24,13 +24,13 @@ public class Node : MonoBehaviour {
 		sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		sphere.transform.position = new Vector3 (
 			gameObject.transform.position.x,
-			gameObject.transform.position.y + gameObject.transform.localScale.y * 2,
+			gameObject.transform.position.y + gameObject.transform.localScale.y * 0.75f,
 			gameObject.transform.position.z
 		);
 		sphere.transform.localScale = new Vector3 (
-			gameObject.transform.localScale.y / 3,
-			gameObject.transform.localScale.y / 3,
-			gameObject.transform.localScale.y / 3
+			gameObject.transform.localScale.x / 4,
+			gameObject.transform.localScale.x / 4,
+			gameObject.transform.localScale.x / 4
 		);
 		sphere.transform.parent = gameObject.transform;
 	}

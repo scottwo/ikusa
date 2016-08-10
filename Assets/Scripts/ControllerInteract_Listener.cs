@@ -24,8 +24,8 @@ public class ControllerInteract_Listener : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Node hoveringNode = gridManager.findNodeByCordFloat (this.transform.position);
 		if (this.name.Contains ("right")) {
+			Node hoveringNode = gridManager.findNodeByCordFloat (this.transform.position);
 			if (hoveringNode != null) {
 				gridManager.hoveringNode = hoveringNode;
 			} else {
@@ -35,18 +35,15 @@ public class ControllerInteract_Listener : MonoBehaviour {
 	}
 
 	private void SomethingWasTouched(object sender, ObjectInteractEventArgs e) {
-		if(e.target.name.ToLower().Contains("hero")) {
+		if(e.target.name.ToLower().Contains("soldier")) {
 			Unit unit = e.target.GetComponent<Unit> ();
-			unit.isBeingTouched = true;
-			unitManager.touchedUnit = unit;
+			unitManager.TouchUnit (unit);
 		}
 	}
 
 	private void SomethingWasUntouched(object sender, ObjectInteractEventArgs e) {
-		if(e.target.name.ToLower().Contains("hero")) {
-			Unit unit = e.target.GetComponent<Unit> ();
-			unit.isBeingTouched = false;
-			unitManager.touchedUnit = null;
+		if(e.target.name.ToLower().Contains("soldier")) {
+			unitManager.UntouchUnit ();
 		}
 	}
 
@@ -68,7 +65,7 @@ public class ControllerInteract_Listener : MonoBehaviour {
 
 	private void TouchPadWasPressed(object sender, ControllerInteractionEventArgs e) {
 		if (unitManager.selectedUnit != null) {
-			unitManager.MoveUnitByXZ (unitManager.selectedUnit, this.transform.position);
+			unitManager.MoveUnit (unitManager.selectedUnit, gridManager.hoveringNode);
 		} 
 	}
 
