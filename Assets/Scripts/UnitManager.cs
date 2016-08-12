@@ -7,12 +7,16 @@ public class UnitManager : MonoBehaviour {
 
 	public Unit[] unitPrefabs;
 	public GridManager gridManager;
+	public PlayerManager playerManager;
 	public Unit selectedUnit;
 	public Unit touchedUnit;
+	public enum UnitType
+	{
+		soldier, assassin, wizard, brute
+	};
 
 	private List<Unit> units = new List<Unit>();
 	private List<MovementObj> movingUnits = new List<MovementObj>();
-	private GameObject selectedController;
 
 	// Use this for initialization
 	void Start () {
@@ -22,13 +26,6 @@ public class UnitManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		ProcessMovingUnits ();
-
-		if (selectedController != null) {
-			Node node = gridManager.findNodeByCordFloat (selectedController.transform.position);
-			if (!node.hoverOver) {
-				node.hoverOver = true;
-			}
-		}
 	}
 
 	void ProcessMovingUnits() {
@@ -76,9 +73,23 @@ public class UnitManager : MonoBehaviour {
 		unit.transform.rotation = Quaternion.Euler (0, direction, 0);
 	}
 
-	public void createUnit(Node node, float scale) {
-		Unit unit = Instantiate (unitPrefabs [0]);
-		unit.transform.parent = gameObject.transform;
+	public void createUnit(Node node, float scale, UnitType type, Player player) {
+		Unit unit = null;
+		switch (type) {
+		case UnitType.soldier:
+			unit = Instantiate (unitPrefabs [0]);
+			break;
+		case UnitType.wizard:
+			unit = Instantiate (unitPrefabs [1]);
+			break;
+		case UnitType.assassin:
+			unit = Instantiate (unitPrefabs [2]);
+			break;
+		case UnitType.brute:
+			unit = Instantiate (unitPrefabs [3]);
+			break;
+		}
+		unit.transform.parent = this.transform;
 		unit.transform.localScale = new Vector3 (
 			unit.transform.localScale.x * scale,
 			unit.transform.localScale.y * scale,
@@ -90,10 +101,22 @@ public class UnitManager : MonoBehaviour {
 			node.transform.position.z
 		);
 		unit.currentNode = node;
+		node.currentUnit = unit;
+		unit.player = player;
+		unit.playerManager = playerManager;
+		unit.unitManager = this;
 		units.Add (unit);
 	}
 
 	public void MoveUnit(Unit unit, Node node) {
+		if(node.currentUnit != null){
+			if(node.currentUnit.player != unit.player) {
+				if(gridManager.path.Length > 1) {
+					this.MoveUnit (unit, gridManager.path [gridManager.path.Length - 2]);
+				}
+				this.UnitCombat (unit, node.currentUnit);
+			}
+		}
 		float destinationX = node.transform.position.x;
 		float destinationZ = node.transform.position.z;
 		MovementObj movementVector = new MovementObj ();
@@ -103,6 +126,7 @@ public class UnitManager : MonoBehaviour {
 		unit.currentNode = node;
 		unit.animator.SetBool ("Run", true);
 		DeselectUnit ();
+		node.currentUnit = unit;
     }
 
 	public void MoveUnitByXZ(Unit unit, Vector3 position) {
@@ -118,7 +142,7 @@ public class UnitManager : MonoBehaviour {
 	}
 
 	public void UntouchUnit(){
-		if (selectedUnit != touchedUnit) {
+		if (touchedUnit != selectedUnit) {
 			touchedUnit.HideIndicator ();
 		}
 		touchedUnit.isBeingTouched = false;
@@ -128,7 +152,6 @@ public class UnitManager : MonoBehaviour {
 	public void SelectUnit(Unit unit, GameObject controller) {
 		selectedUnit = unit;
 		unit.isSelected = true;
-		selectedController = controller;
 		unit.ShowSelectedIndicator ();
 	}
 
@@ -137,9 +160,16 @@ public class UnitManager : MonoBehaviour {
 			selectedUnit.isSelected = false;
 			selectedUnit.HideIndicator ();
 			selectedUnit = null;
-			selectedController = null;
 			gridManager.RemovePath ();
 		}
+	}
+
+	private void UnitCombat(Unit aggressor, Unit defender) {
+		aggressor.animator.SetBool ("Melee Right Attack 03", true);
+//		defender.animator.SetBool ("Take Damage", true);
+		defender.currentNode.currentUnit = null;
+		Destroy (defender);
+		DeselectUnit ();
 	}
 }
 

@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using VRTK;
 
 public class Unit : MonoBehaviour {
 
+	public Unit() {}
+	public UnitManager unitManager;
+	public PlayerManager playerManager;
 	public bool isBeingTouched;
 	public bool isSelected;
 	public Node currentNode;
 	public Animator animator;
+	public Player player;
 
 	private GameObject cube;
 	private Color cubeSelectedColor = Color.red;
@@ -19,6 +24,8 @@ public class Unit : MonoBehaviour {
 		isSelected = false;
 		cubeRotation = new Vector3 (1.0f, 1.0f, 1.0f);
 		animator = GetComponent<Animator> ();
+		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
+		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
 	}
 	
 	// Update is called once per frame
@@ -27,6 +34,23 @@ public class Unit : MonoBehaviour {
 			cube.transform.Rotate (cubeRotation, Time.deltaTime * 120f);
 		}
 	}
+
+	private void WasTouched(object sender, InteractableObjectEventArgs e) {
+		if(this.player == playerManager.currentPlayer) {
+			this.ShowTouchedIndicator ();
+		}
+		this.isBeingTouched = true;
+		unitManager.touchedUnit = this;
+	}
+		
+	private void WasUntouched(object sender, InteractableObjectEventArgs e) {
+		if(!this.isSelected) {
+			this.HideIndicator ();
+		}
+		this.isBeingTouched = false;
+		unitManager.touchedUnit = null;
+	}
+
 
 	public void ShowTouchedIndicator() {
 		cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
@@ -41,14 +65,16 @@ public class Unit : MonoBehaviour {
 	}
 
 	public void ShowSelectedIndicator() {
-		if (cubeRendar.material.color != cubeSelectedColor) {
+		if (this.player == playerManager.currentPlayer && cubeRendar.material.color != cubeSelectedColor) {
 			cubeRendar.material.color = cubeSelectedColor;
 		}
 	}
 
 	public void HideIndicator() {
-		Destroy (cube);
-		cube = null;
-		cubeRendar = null;
+		if (cube != null) {
+			Destroy (cube);
+			cube = null;
+			cubeRendar = null;
+		}
 	}
 }

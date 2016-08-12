@@ -4,6 +4,7 @@ using System.Collections;
 public class GridManager : MonoBehaviour {
 
 	public UnitManager unitManager;
+	public PlayerManager playerManager;
 	public Node cube;
 	public Material[] materials;
 	public Material selectedMaterial;
@@ -26,7 +27,10 @@ public class GridManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		GenerateGrid ();
-		unitManager.createUnit (grid[0], unitScale);
+		unitManager.createUnit (grid[0], unitScale, UnitManager.UnitType.soldier, playerManager.playerList[0]);
+		unitManager.createUnit (grid[50], unitScale, UnitManager.UnitType.wizard, playerManager.playerList[1]);
+		unitManager.createUnit (grid[30], unitScale, UnitManager.UnitType.assassin, playerManager.playerList[0]);
+		unitManager.createUnit (grid[60], unitScale, UnitManager.UnitType.brute, playerManager.playerList[1]);
 	}
 
 	void GenerateGrid() {
@@ -121,9 +125,26 @@ public class GridManager : MonoBehaviour {
 			tempPath [index] = foundNode;
 		}
 		if (tempPath != path) {
-			path = tempPath;
-			for (int k = 0; k < path.Length; k++) {
-				path [k].ShowIndicator ();
+			bool blocked = false;
+			int blockedIndex = 0;
+			for(int k = 0; k < tempPath.Length; k++) {
+				if (tempPath [k].currentUnit != null) {
+					//TODO: implement pathfinding around the obstacle/unit.
+					blocked = true;
+					blockedIndex = k;
+					break;
+				}
+			}
+			if (blocked) {
+				path = new Node[blockedIndex + 1];
+				for(int k = 0; k <= blockedIndex; k++) {
+					path [k] = tempPath [k];
+				}
+			} else {
+				path = tempPath;
+				for (int k = 0; k < path.Length; k++) {
+					path [k].ShowIndicator ();
+				}
 			}
 		}
 	}

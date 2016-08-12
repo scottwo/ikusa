@@ -7,6 +7,7 @@ public class Node : MonoBehaviour {
 	public Vector2 coords;
 	public GridManager gridManager;
 	public bool hoverOver;
+	public Unit currentUnit;
 
 	private GameObject sphere;
 

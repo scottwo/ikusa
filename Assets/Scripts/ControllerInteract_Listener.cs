@@ -1,16 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
 using VRTK;
 
 public class ControllerInteract_Listener : MonoBehaviour {
 
 	public UnitManager unitManager;
 	public GridManager gridManager;
+	public PlayerManager playerManager;
 
-	// Use this for initialization
 	void Start () {
-		GetComponent<VRTK_InteractTouch>().ControllerTouchInteractableObject += new ObjectInteractEventHandler(SomethingWasTouched);
-		GetComponent<VRTK_InteractTouch>().ControllerUntouchInteractableObject += new ObjectInteractEventHandler(SomethingWasUntouched);
 		GetComponent<VRTK_ControllerEvents>().TriggerPressed += new ControllerInteractionEventHandler(TriggerWasPulled);
 		GetComponent<VRTK_ControllerEvents>().TriggerReleased += new ControllerInteractionEventHandler(TriggerWasReleased);
 		GetComponent<VRTK_ControllerEvents>().TouchpadPressed += new ControllerInteractionEventHandler(TouchPadWasPressed);
@@ -21,34 +18,18 @@ public class ControllerInteract_Listener : MonoBehaviour {
 //		GetComponent<VRTK_ControllerEvents>().ApplicationMenuPressed += new ControllerInteractionEventHandler(MenuButtonPressed);
 //		GetComponent<VRTK_ControllerEvents>().ApplicationMenuReleased += new ControllerInteractionEventHandler(DoApplicationMenuReleased);
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
-		if (this.name.Contains ("right")) {
-			Node hoveringNode = gridManager.findNodeByCordFloat (this.transform.position);
-			if (hoveringNode != null) {
-				gridManager.hoveringNode = hoveringNode;
-			} else {
-				gridManager.hoveringNode = null;
-			}
-		}
-	}
-
-	private void SomethingWasTouched(object sender, ObjectInteractEventArgs e) {
-		if(e.target.name.ToLower().Contains("soldier")) {
-			Unit unit = e.target.GetComponent<Unit> ();
-			unitManager.TouchUnit (unit);
-		}
-	}
-
-	private void SomethingWasUntouched(object sender, ObjectInteractEventArgs e) {
-		if(e.target.name.ToLower().Contains("soldier")) {
-			unitManager.UntouchUnit ();
+		Node hoveringNode = gridManager.findNodeByCordFloat (this.transform.position);
+		if (hoveringNode != null) {
+			gridManager.hoveringNode = hoveringNode;
+		} else {
+			gridManager.hoveringNode = null;
 		}
 	}
 
 	private void TriggerWasPulled(object sender, ControllerInteractionEventArgs e) {
-		if (unitManager.touchedUnit != null) {
+		if (unitManager.touchedUnit != null && unitManager.touchedUnit.player == playerManager.currentPlayer) {
 			unitManager.SelectUnit (unitManager.touchedUnit, gameObject);
 		} else {
 			unitManager.DeselectUnit ();
