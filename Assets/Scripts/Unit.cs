@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using VRTK;
 
 public class Unit : MonoBehaviour {
@@ -12,6 +13,7 @@ public class Unit : MonoBehaviour {
 	public Node currentNode;
 	public Animator animator;
 	public Player player;
+	public List<Actions> actionQueue = new List<Actions>();
 
 	private GameObject cube;
 	private Color cubeSelectedColor = Color.red;
