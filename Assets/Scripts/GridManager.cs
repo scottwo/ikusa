@@ -11,7 +11,7 @@ public class GridManager : MonoBehaviour {
 	public Vector3 initialPosition;
 	public enum Size
 	{
-		small, medium, large
+		small, medium, large, huge
 	};
 	public Size mapSize;
 	public Node hoveringNode;
@@ -74,6 +74,11 @@ public class GridManager : MonoBehaviour {
 			unitScale = 1.0f;
 			break;
 		case Size.large:
+			scale = sideLength / 24;
+			xSize = zSize = 24;
+			unitScale = 0.75f;
+			break;
+		case Size.huge:
 			scale = sideLength / 32;
 			xSize = zSize = 32;
 			unitScale = 0.5f;
