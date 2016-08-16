@@ -95,7 +95,6 @@ public class UnitManager : MonoBehaviour {
 		actionQueue.Add (unit);
 		unit.currentNode = node;
 		node.currentUnit = unit;
-		Debug.Log (actionQueue.Contains(unit));
 		unit.animator.SetBool ("Run", true);
 		DeselectUnit ();
     }
@@ -104,20 +103,6 @@ public class UnitManager : MonoBehaviour {
 		Node node = gridManager.findNodeByCordFloat (position);
 		MoveUnit (unit, node);
 		DeselectUnit ();
-	}
-
-	public void TouchUnit(Unit unit) {
-		unit.isBeingTouched = true;
-		unit.ShowTouchedIndicator ();
-		touchedUnit = unit;
-	}
-
-	public void UntouchUnit(){
-		if (touchedUnit != selectedUnit) {
-			touchedUnit.HideIndicator ();
-		}
-		touchedUnit.isBeingTouched = false;
-		touchedUnit = null;
 	}
 
 	public void SelectUnit(Unit unit, GameObject controller) {

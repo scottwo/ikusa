@@ -38,18 +38,18 @@ public class Unit : MonoBehaviour {
 	}
 
 	private void WasTouched(object sender, InteractableObjectEventArgs e) {
-		if(this.player == playerManager.currentPlayer) {
-			this.ShowTouchedIndicator ();
+		if(player == playerManager.currentPlayer && !isSelected) {
+			ShowTouchedIndicator ();
 		}
-		this.isBeingTouched = true;
+		isBeingTouched = true;
 		unitManager.touchedUnit = this;
 	}
 		
 	private void WasUntouched(object sender, InteractableObjectEventArgs e) {
-		if(!this.isSelected) {
-			this.HideIndicator ();
+		if(!isSelected) {
+			HideIndicator ();
 		}
-		this.isBeingTouched = false;
+		isBeingTouched = false;
 		unitManager.touchedUnit = null;
 	}
 
