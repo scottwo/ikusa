@@ -17,7 +17,6 @@ public class UnitManager : MonoBehaviour {
 
 	private List<Unit> actionQueue = new List<Unit>();
 	private List<Unit> units = new List<Unit>();
-	private List<MovementObj> movingUnits = new List<MovementObj>();
 
 	// Use this for initialization
 	void Start () {
@@ -120,17 +119,34 @@ public class UnitManager : MonoBehaviour {
 		}
 	}
 
+	public void RemoveUnit(Unit unit) {
+		units.Remove (unit);
+		if(selectedUnit == unit) {
+			selectedUnit = null;
+		}
+		if(touchedUnit == unit) {
+			touchedUnit = null;
+		}
+		if (actionQueue.Contains (unit)) {
+			actionQueue.Remove (unit);
+		}
+		unit.currentNode.currentUnit = null;
+		unit.player.units.Remove (unit);
+		Destroy (unit.gameObject);
+	}
+
 	private void UnitCombat(Unit aggressor, Unit defender) {
 		CombatObj combatObj = new CombatObj ();
 		combatObj.aggressor = aggressor;
 		combatObj.defender = defender;
 		combatObj.aggressorAggressing = true;
 		combatObj.defenderDefending = false;
+		combatObj.unitManager = this;
 		aggressor.actionQueue.Add (combatObj);
 
-//		if (actionQueue.Find (aggressor) == null) {
-//			actionQueue.Add (aggressor);
-//		} 
+		if (!actionQueue.Contains (aggressor)) {
+			actionQueue.Add (aggressor);
+		} 
 		aggressor.animator.SetBool ("Melee Right Attack 03", true);
 		DeselectUnit ();
 	}
@@ -188,11 +204,14 @@ public class MovementObj : Actions {
 }
 
 public class CombatObj : Actions {
+	public UnitManager unitManager;
+
 	public Unit aggressor;
 	public Unit defender;
 
 	public bool aggressorAggressing;
 	public bool defenderDefending;
+	public bool defenderDying;
 
 	public void Process() {
 		if (!aggressor.animator.GetBool ("Melee Right Attack 03") && aggressorAggressing) {
@@ -203,6 +222,16 @@ public class CombatObj : Actions {
 		if(!defender.animator.GetBool ("Take Damage") && defenderDefending) {
 			defenderDefending = false;
 			defender.animator.SetBool ("Die", true);
+			Debug.Log ("Set dying");
+			defenderDying = true;
+		}
+		if(!defender.animator.GetBool ("Die") && defenderDying) {
+			Debug.Log ("Dying done");
+			defenderDying = false;
+		}
+		if(!aggressorAggressing && !defenderDefending && !defenderDying) {
+			aggressor.actionQueue.Remove (this);
+			unitManager.RemoveUnit (defender);
 		}
 	}
 }
