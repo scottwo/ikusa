@@ -222,14 +222,10 @@ public class CombatObj : Actions {
 		if(!defender.animator.GetBool ("Take Damage") && defenderDefending) {
 			defenderDefending = false;
 			defender.animator.SetBool ("Die", true);
-			Debug.Log ("Set dying");
 			defenderDying = true;
 		}
 		if(!defender.animator.GetBool ("Die") && defenderDying) {
-			Debug.Log ("Dying done");
 			defenderDying = false;
-		}
-		if(!aggressorAggressing && !defenderDefending && !defenderDying) {
 			aggressor.actionQueue.Remove (this);
 			unitManager.RemoveUnit (defender);
 		}

@@ -1,23 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerManager : MonoBehaviour {
 
-	public Player[] playerList;
+	public List<Player> playerList = new List<Player> ();
 	public Player currentPlayer;
 	public Player player;
+	public int numOfPlayers;
 
 	void Awake () {
-		playerList = new Player[2];
-		playerList[0] = Instantiate(player);
-		playerList [0].isUser = true;
-		playerList [0].id = 0;
-		playerList [0].transform.parent = this.transform;
-		playerList[1] = Instantiate(player);
-		playerList [1].isUser = false;
-		playerList [1].id = 1;
-		playerList [1].transform.parent = this.transform;
-		currentPlayer = playerList [0];
+		for(int i =0; i < numOfPlayers; i++) {
+			playerList.Add (Instantiate(player));
+		}
 	}
 	
 	// Update is called once per frame
