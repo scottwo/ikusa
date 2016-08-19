@@ -10,13 +10,12 @@ public class PlayerManager : MonoBehaviour {
 	public int numOfPlayers;
 
 	void Awake () {
-		for(int i =0; i < numOfPlayers; i++) {
-			playerList.Add (Instantiate(player));
+		for(int i = 0; i < numOfPlayers; i++) {
+			Player newPlayer = Instantiate (player);
+			newPlayer.playerManager = this;
+			newPlayer.id = i;
+			playerList.Add (newPlayer);
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+		playerList [0] = currentPlayer;
 	}
 }
