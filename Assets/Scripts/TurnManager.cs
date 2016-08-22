@@ -19,19 +19,54 @@ public class TurnManager : MonoBehaviour {
 	}
 
 	void Update () {
-	
+		bool allInactive = true;
+		for (int i = 0; i < currentPlayer.units.Count; i++) {
+			if (currentPlayer.units [i].active) {
+				allInactive = false;
+			}
+		}
+		if (allInactive) {
+			NextTurn ();
+		}
 	}
 
 	public void NextTurn() {
+
 		//clean up current player's units.
-//		currentPlayer.units.ForEach(u => u.);
+		for (int i = 0; i < currentPlayer.units.Count; i++) {
+			currentPlayer.units [i].active = false;
+			currentPlayer.units [i].currentActionPoints = 0;
+			currentPlayer.units [i].currentMovementPoints = 0;
+		}
+
 		//Change player to next player in the list and setup their units/stough.
-		int currentIndex = playerManager.playerList.FindIndex (p => p.id == currentPlayer.id);
+		int currentIndex = currentPlayer.id;
+		Debug.Log (currentIndex);
 		if (currentIndex == playerManager.playerList.Count - 1) {
 			currentPlayer = playerManager.playerList [0];
 		} else {
 			currentPlayer = playerManager.playerList [currentIndex++];
 		}
+		Debug.Log (currentPlayer.id);
+		//Setup next player's units
+		for (int i = 0; i < currentPlayer.units.Count; i++) {
+			currentPlayer.units [i].active = true;
+			currentPlayer.units [i].currentActionPoints = currentPlayer.units[i].maxActionPoints;
+			currentPlayer.units [i].currentMovementPoints = currentPlayer.units[i].maxMovementPoints;
+		}
 
+		//If the next player is AI, let it robot around.
+		if (!currentPlayer.isUser) {
+			playerManager.ProcessAITurn (currentPlayer);
+		}
+	}
+
+	public void StartFirstTurn() {
+		currentPlayer = playerManager.playerList[0];
+		for (int i = 0; i < currentPlayer.units.Count; i++) {
+			currentPlayer.units [i].active = true;
+			currentPlayer.units [i].currentActionPoints = currentPlayer.units[i].maxActionPoints;
+			currentPlayer.units [i].currentMovementPoints = currentPlayer.units[i].maxMovementPoints;
+		}
 	}
 }

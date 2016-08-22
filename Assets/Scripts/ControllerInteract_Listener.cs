@@ -6,6 +6,7 @@ public class ControllerInteract_Listener : MonoBehaviour {
 	public UnitManager unitManager;
 	public GridManager gridManager;
 	public PlayerManager playerManager;
+	public TurnManager turnManager;
 
 	void Start () {
 		GetComponent<VRTK_ControllerEvents>().TriggerPressed += new ControllerInteractionEventHandler(TriggerWasPulled);
@@ -29,7 +30,7 @@ public class ControllerInteract_Listener : MonoBehaviour {
 	}
 
 	private void TriggerWasPulled(object sender, ControllerInteractionEventArgs e) {
-		if (unitManager.touchedUnit != null && unitManager.touchedUnit.player == playerManager.currentPlayer) {
+		if (unitManager.touchedUnit != null && unitManager.touchedUnit.player == turnManager.currentPlayer) {
 			unitManager.SelectUnit (unitManager.touchedUnit, gameObject);
 		} else {
 			unitManager.DeselectUnit ();

@@ -8,19 +8,25 @@ public class Unit : MonoBehaviour {
 	public Unit() {}
 	public UnitManager unitManager;
 	public PlayerManager playerManager;
+	public TurnManager turnManager;
 	public bool isBeingTouched;
 	public bool isSelected;
 	public Node currentNode;
 	public Animator animator;
 	public Player player;
 	public List<Actions> actionQueue = new List<Actions>();
+	public bool isRanged;
+	public int maxMovementPoints;
+	public int currentMovementPoints;
+	public int maxActionPoints;
+	public int currentActionPoints;
+	public bool active;
 
 	private GameObject cube;
 	private Color cubeSelectedColor = Color.red;
 	private Renderer cubeRendar;
 	private Vector3 cubeRotation;
 
-	// Use this for initialization
 	void Start () {
 		isBeingTouched = false;
 		isSelected = false;
@@ -30,7 +36,6 @@ public class Unit : MonoBehaviour {
 		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		if(cube != null) {
 			cube.transform.Rotate (cubeRotation, Time.deltaTime * 120f);
@@ -38,7 +43,7 @@ public class Unit : MonoBehaviour {
 	}
 
 	private void WasTouched(object sender, InteractableObjectEventArgs e) {
-		if(player == playerManager.currentPlayer && !isSelected) {
+		if(player == turnManager.currentPlayer && !isSelected) {
 			ShowTouchedIndicator ();
 		}
 		isBeingTouched = true;
@@ -67,7 +72,7 @@ public class Unit : MonoBehaviour {
 	}
 
 	public void ShowSelectedIndicator() {
-		if (this.player == playerManager.currentPlayer && cubeRendar.material.color != cubeSelectedColor) {
+		if (cubeRendar.material.color != cubeSelectedColor) {
 			cubeRendar.material.color = cubeSelectedColor;
 		}
 	}

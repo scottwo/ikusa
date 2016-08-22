@@ -5,6 +5,7 @@ public class GridManager : MonoBehaviour {
 
 	public UnitManager unitManager;
 	public PlayerManager playerManager;
+	public TurnManager turnManager;
 	public Node cube;
 	public Material[] materials;
 	public Material selectedMaterial;
@@ -24,13 +25,17 @@ public class GridManager : MonoBehaviour {
 	private float scale = 0.025f;
 	private float unitScale;
 
-	// Use this for initialization
 	void Start () {
 		GenerateGrid ();
-		unitManager.createUnit (grid[0], unitScale, UnitManager.UnitType.soldier, playerManager.playerList[0]);
-		unitManager.createUnit (grid[50], unitScale, UnitManager.UnitType.wizard, playerManager.playerList[1]);
-		unitManager.createUnit (grid[30], unitScale, UnitManager.UnitType.assassin, playerManager.playerList[0]);
-		unitManager.createUnit (grid[60], unitScale, UnitManager.UnitType.brute, playerManager.playerList[1]);
+		unitManager.createUnit (grid[0], unitScale, UnitManager.UnitType.melee, playerManager.playerList[0]);
+		unitManager.createUnit (grid[10], unitScale, UnitManager.UnitType.heavy_melee, playerManager.playerList[1]);
+		unitManager.createUnit (grid[20], unitScale, UnitManager.UnitType.ranged, playerManager.playerList[0]);
+		unitManager.createUnit (grid[30], unitScale, UnitManager.UnitType.heavy_ranged, playerManager.playerList[1]);
+		unitManager.createUnit (grid[40], unitScale, UnitManager.UnitType.mage, playerManager.playerList[0]);
+		unitManager.createUnit (grid[50], unitScale, UnitManager.UnitType.heavy_mage, playerManager.playerList[1]);
+		unitManager.createUnit (grid[60], unitScale, UnitManager.UnitType.buff_mage, playerManager.playerList[0]);
+		unitManager.createUnit (grid[61], unitScale, UnitManager.UnitType.heal_mage, playerManager.playerList[1]);
+		turnManager.StartFirstTurn ();
 	}
 
 	void GenerateGrid() {
@@ -93,7 +98,6 @@ public class GridManager : MonoBehaviour {
 		initialPosition.z += scale / 2;
 	}
 
-	// Update is called once per frame
 	void Update () {
 		//Only draw path if user is hovering over a node and has selected a unit.
 		if (hoveringNode != null && unitManager.selectedUnit != null) {

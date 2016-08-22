@@ -8,22 +8,21 @@ public class UnitManager : MonoBehaviour {
 	public Unit[] unitPrefabs;
 	public GridManager gridManager;
 	public PlayerManager playerManager;
+	public TurnManager turnManager;
 	public Unit selectedUnit;
 	public Unit touchedUnit;
 	public enum UnitType
 	{
-		soldier, assassin, wizard, brute
+		melee, heavy_melee, ranged, heavy_ranged, mage, heavy_mage, buff_mage, heal_mage
 	};
 
 	private List<Unit> actionQueue = new List<Unit>();
-	private List<Unit> units = new List<Unit>();
+	public List<Unit> units = new List<Unit>();
 
-	// Use this for initialization
 	void Start () {
 		
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		ProcessQueue ();
 	}
@@ -43,17 +42,29 @@ public class UnitManager : MonoBehaviour {
 	public void createUnit(Node node, float scale, UnitType type, Player player) {
 		Unit unit = null;
 		switch (type) {
-		case UnitType.soldier:
+		case UnitType.melee:
 			unit = Instantiate (unitPrefabs [0]);
 			break;
-		case UnitType.wizard:
+		case UnitType.heavy_melee:
 			unit = Instantiate (unitPrefabs [1]);
 			break;
-		case UnitType.assassin:
+		case UnitType.ranged:
 			unit = Instantiate (unitPrefabs [2]);
 			break;
-		case UnitType.brute:
+		case UnitType.heavy_ranged:
 			unit = Instantiate (unitPrefabs [3]);
+			break;
+		case UnitType.mage:
+			unit = Instantiate (unitPrefabs [4]);
+			break;
+		case UnitType.heavy_mage:
+			unit = Instantiate (unitPrefabs [5]);
+			break;
+		case UnitType.buff_mage:
+			unit = Instantiate (unitPrefabs [6]);
+			break;
+		case UnitType.heal_mage:
+			unit = Instantiate (unitPrefabs [7]);
 			break;
 		}
 		unit.transform.parent = this.transform;
@@ -70,15 +81,17 @@ public class UnitManager : MonoBehaviour {
 		unit.currentNode = node;
 		node.currentUnit = unit;
 		unit.player = player;
+		unit.player.units.Add (unit);
 		unit.playerManager = playerManager;
 		unit.unitManager = this;
+		unit.turnManager = turnManager;
 		units.Add (unit);
 	}
 
 	public void MoveUnit(Unit unit, Node node) {
 		if(node.currentUnit != null){
 			if(node.currentUnit.player != unit.player) {
-				if(gridManager.path.Length > 1) {
+				if(gridManager.path != null && gridManager.path.Length > 1) {
 					this.MoveUnit (unit, gridManager.path [gridManager.path.Length - 2]);
 				}
 				this.UnitCombat (unit, node.currentUnit);
@@ -139,8 +152,6 @@ public class UnitManager : MonoBehaviour {
 		CombatObj combatObj = new CombatObj ();
 		combatObj.aggressor = aggressor;
 		combatObj.defender = defender;
-		combatObj.aggressorAggressing = true;
-		combatObj.defenderDefending = false;
 		combatObj.unitManager = this;
 		aggressor.actionQueue.Add (combatObj);
 
@@ -148,6 +159,7 @@ public class UnitManager : MonoBehaviour {
 			actionQueue.Add (aggressor);
 		} 
 		aggressor.animator.SetBool ("Melee Right Attack 03", true);
+		aggressor.active = false;
 		DeselectUnit ();
 	}
 }
@@ -166,6 +178,7 @@ public class MovementObj : Actions {
 			if (Mathf.Abs(unit.transform.position.z - destination.y) < unit.transform.localScale.z * 0.1f) {
 				unit.animator.SetBool ("Run", false);
 				unit.actionQueue.Remove (this);
+				unit.active = false;
 				gridManager.RemovePath ();
 			} else {
 				if (unit.transform.position.z -destination.y > unit.transform.localScale.z * 0.1f){
@@ -209,9 +222,9 @@ public class CombatObj : Actions {
 	public Unit aggressor;
 	public Unit defender;
 
-	public bool aggressorAggressing;
-	public bool defenderDefending;
-	public bool defenderDying;
+	public bool aggressorAggressing = true;
+	public bool defenderDefending = false;
+	public bool defenderDying = false;
 
 	public void Process() {
 		if (!aggressor.animator.GetBool ("Melee Right Attack 03") && aggressorAggressing) {
