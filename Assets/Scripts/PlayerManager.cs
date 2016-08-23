@@ -32,7 +32,6 @@ public class PlayerManager : MonoBehaviour {
 		//Move adjacent to and attack the nearest unit.
 		//Figure out how to do it only one at a time. I even added an update function to see if i could use it.
 		//So, see if you can use it.
-		Debug.Log(player.units.Count);
 		for (int i = 0; i < player.units.Count; i++) {
 			Unit unit = player.units [i];
 			//Create a list of enemies.

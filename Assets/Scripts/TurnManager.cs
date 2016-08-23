@@ -41,11 +41,11 @@ public class TurnManager : MonoBehaviour {
 
 		//Change player to next player in the list and setup their units/stough.
 		int currentIndex = currentPlayer.id;
-		Debug.Log (currentIndex);
-		if (currentIndex == playerManager.playerList.Count - 1) {
+		int nextPlayerIndex = currentIndex + 1;
+		if (nextPlayerIndex == playerManager.playerList.Count) {
 			currentPlayer = playerManager.playerList [0];
 		} else {
-			currentPlayer = playerManager.playerList [currentIndex++];
+			currentPlayer = playerManager.playerList [nextPlayerIndex];
 		}
 		Debug.Log (currentPlayer.id);
 		//Setup next player's units

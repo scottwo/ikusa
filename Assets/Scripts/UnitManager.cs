@@ -227,17 +227,17 @@ public class CombatObj : Actions {
 	public bool defenderDying = false;
 
 	public void Process() {
-		if (!aggressor.animator.GetBool ("Melee Right Attack 03") && aggressorAggressing) {
+		if (aggressor.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals("Melee Right Attack 03") && aggressorAggressing) {
 			aggressorAggressing = false;
-			defender.animator.SetBool ("Take Damage", true);
+			defender.animator.Play("Take Damage");
 			defenderDefending = true;
 		}
-		if(!defender.animator.GetBool ("Take Damage") && defenderDefending) {
+		if(!defender.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals("Take Damage") && defenderDefending) {
 			defenderDefending = false;
 			defender.animator.SetBool ("Die", true);
 			defenderDying = true;
 		}
-		if(!defender.animator.GetBool ("Die") && defenderDying) {
+		if(!defender.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals("Die") && defenderDying) {
 			defenderDying = false;
 			aggressor.actionQueue.Remove (this);
 			unitManager.RemoveUnit (defender);
