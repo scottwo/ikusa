@@ -91,7 +91,7 @@ public class UnitManager : MonoBehaviour {
 	public void MoveUnit(Unit unit, Node node) {
 		if(node.currentUnit != null){
 			if(node.currentUnit.player != unit.player) {
-				if(gridManager.path != null && gridManager.path.Length > 1) {
+				if (gridManager.path != null && gridManager.path.Length > 1) {
 					this.MoveUnit (unit, gridManager.path [gridManager.path.Length - 2]);
 				}
 				this.UnitCombat (unit, node.currentUnit);
@@ -148,7 +148,7 @@ public class UnitManager : MonoBehaviour {
 		Destroy (unit.gameObject);
 	}
 
-	private void UnitCombat(Unit aggressor, Unit defender) {
+	public void UnitCombat(Unit aggressor, Unit defender) {
 		CombatObj combatObj = new CombatObj ();
 		combatObj.aggressor = aggressor;
 		combatObj.defender = defender;
@@ -177,7 +177,7 @@ public class MovementObj : Actions {
 		if (Mathf.Abs(unit.transform.position.x - destination.x) < unit.transform.localScale.z * 0.1f) {
 			if (Mathf.Abs(unit.transform.position.z - destination.y) < unit.transform.localScale.z * 0.1f) {
 				unit.animator.SetBool ("Run", false);
-				unit.actionQueue.Remove (this);
+				unit.actionQueue.RemoveAt (0);
 				unit.active = false;
 				gridManager.RemovePath ();
 			} else {
@@ -226,20 +226,29 @@ public class CombatObj : Actions {
 	public bool defenderDefending = false;
 	public bool defenderDying = false;
 
+	private Animator anim;
+	private int attackHash = Animator.StringToHash("Melee Right Attack 03");
+	private int damageHash = Animator.StringToHash("Take Damage");
+	private int deathHash = Animator.StringToHash("Die");
+
 	public void Process() {
-		if (aggressor.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals("Melee Right Attack 03") && aggressorAggressing) {
+		if (defender == null) {
+			aggressor.actionQueue.RemoveAt(0);
+			return;
+		}
+		if (aggressor.animator.GetCurrentAnimatorStateInfo(0).shortNameHash == attackHash) {
 			aggressorAggressing = false;
-			defender.animator.Play("Take Damage");
+			defender.animator.SetBool("Take Damage", true);
 			defenderDefending = true;
 		}
-		if(!defender.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals("Take Damage") && defenderDefending) {
+		if(!defender.animator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(damageHash) && defenderDefending) {
 			defenderDefending = false;
 			defender.animator.SetBool ("Die", true);
 			defenderDying = true;
 		}
-		if(!defender.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals("Die") && defenderDying) {
+		if(!defender.animator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(deathHash) && defenderDying) {
 			defenderDying = false;
-			aggressor.actionQueue.Remove (this);
+			aggressor.actionQueue.RemoveAt(0);
 			unitManager.RemoveUnit (defender);
 		}
 	}

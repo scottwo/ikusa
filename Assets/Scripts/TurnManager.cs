@@ -31,7 +31,6 @@ public class TurnManager : MonoBehaviour {
 	}
 
 	public void NextTurn() {
-
 		//clean up current player's units.
 		for (int i = 0; i < currentPlayer.units.Count; i++) {
 			currentPlayer.units [i].active = false;
@@ -47,7 +46,7 @@ public class TurnManager : MonoBehaviour {
 		} else {
 			currentPlayer = playerManager.playerList [nextPlayerIndex];
 		}
-		Debug.Log (currentPlayer.id);
+
 		//Setup next player's units
 		for (int i = 0; i < currentPlayer.units.Count; i++) {
 			currentPlayer.units [i].active = true;

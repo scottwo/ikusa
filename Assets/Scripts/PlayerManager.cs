@@ -42,29 +42,37 @@ public class PlayerManager : MonoBehaviour {
 				}
 			}
 			//Find the closest enemy.
-			Unit closestEnemy = enemies [0];
-			float closestDistance = Vector2.Distance (enemies [0].currentNode.coords, unit.currentNode.coords);
-			for (int j = 0; j < enemies.Count; j++) {
-				if (Vector2.Distance(enemies [j].currentNode.coords, unit.currentNode.coords) < closestDistance) {
-					closestEnemy = enemies [j];
+			if (enemies.Count > 0) {
+				Unit closestEnemy = enemies [0];
+				float closestDistance = Vector2.Distance (enemies [0].currentNode.coords, unit.currentNode.coords);
+				for (int j = 0; j < enemies.Count; j++) {
+					if (Vector2.Distance (enemies [j].currentNode.coords, unit.currentNode.coords) < closestDistance) {
+						closestEnemy = enemies [j];
+					}
 				}
+				Node nodeToMoveTo = closestEnemy.currentNode;
+				int x = (int)unit.currentNode.coords.x - (int)closestEnemy.currentNode.coords.x;
+//			int y = (int)unit.currentNode.coords.y - (int)closestEnemy.currentNode.coords.y;
+				if (x >= 0) {
+					nodeToMoveTo = gridManager.findNodeByCord ((int)closestEnemy.currentNode.coords.x + 1, (int)closestEnemy.currentNode.coords.y);
+					if (nodeToMoveTo.currentUnit != null) {
+						nodeToMoveTo = gridManager.findNodeByCord ((int)closestEnemy.currentNode.coords.x, (int)closestEnemy.currentNode.coords.y + 1);
+					}
+				} else {
+					nodeToMoveTo = gridManager.findNodeByCord ((int)closestEnemy.currentNode.coords.x - 1, (int)closestEnemy.currentNode.coords.y);
+					if (nodeToMoveTo.currentUnit != null) {
+						nodeToMoveTo = gridManager.findNodeByCord ((int)closestEnemy.currentNode.coords.x, (int)closestEnemy.currentNode.coords.y + 1);
+					}
+				}
+				//attack closest enemy.
+//			unitManager.MoveUnit (unit, closestEnemy.currentNode);
+				unitManager.MoveUnit (unit, nodeToMoveTo);
+				unitManager.UnitCombat (unit, closestEnemy);
+			} else {
+				//No more enemies. Game is won. Baddies win.
+				Debug.Log("Enemies won. You lost by literally doing nothing.");
+				return;
 			}
-//			Node nodeToMoveTo = closestEnemy.currentNode;
-//			int x = unit.currentNode.coords.x - closestEnemy.currentNode.coords.x;
-//			int y = unit.currentNode.coords.y - closestEnemy.currentNode.coords.y;
-//			if (x >= 0) {
-//				nodeToMoveTo = gridManager.findNodeByCord (closestEnemy.currentNode.coords.x + 1, closestEnemy.currentNode.coords.y);
-//				if (nodeToMoveTo.currentUnit != null) {
-//					nodeToMoveTo = gridManager.findNodeByCord (closestEnemy.currentNode.coords.x, closestEnemy.currentNode.coords.y + 1);
-//				}
-//			} else {
-//				nodeToMoveTo = gridManager.findNodeByCord (closestEnemy.currentNode.coords.x - 1, closestEnemy.currentNode.coords.y);
-//				if (nodeToMoveTo.currentUnit != null) {
-//					nodeToMoveTo = gridManager.findNodeByCord (closestEnemy.currentNode.coords.x, closestEnemy.currentNode.coords.y + 1);
-//				}
-//			}
-			//attack closest enemy.
-			unitManager.MoveUnit (unit, closestEnemy.currentNode);
 		}
 	}
 
