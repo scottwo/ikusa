@@ -9,13 +9,4 @@ public class Player : MonoBehaviour {
 	public List<Unit> units = new List<Unit>();
 	public PlayerManager playerManager;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }
