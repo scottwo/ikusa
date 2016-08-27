@@ -16,7 +16,7 @@ public class UnitManager : MonoBehaviour {
 		melee, heavy_melee, ranged, heavy_ranged, mage, heavy_mage, buff_mage, heal_mage
 	};
 
-	private List<Unit> actionQueue = new List<Unit>();
+	public List<Unit> actionQueue = new List<Unit>();
 	public List<Unit> units = new List<Unit>();
 
 	void Start () {
@@ -29,12 +29,10 @@ public class UnitManager : MonoBehaviour {
 
 	void ProcessQueue() {
 		if(actionQueue.Count > 0) {
-			for (int i = 0; i < actionQueue.Count; i++) {
-				if (actionQueue [i].actionQueue.Count > 0) {
-					actionQueue [i].actionQueue [0].Process ();
-				} else {
-					actionQueue.Remove (actionQueue [i]);
-				}
+			if (actionQueue [0].actionQueue.Count > 0) {
+				actionQueue [0].actionQueue [0].Process ();
+			} else {
+				actionQueue.Remove (actionQueue [0]);
 			}
 		}
 	}
@@ -107,7 +105,6 @@ public class UnitManager : MonoBehaviour {
 		actionQueue.Add (unit);
 		unit.currentNode = node;
 		node.currentUnit = unit;
-		unit.animator.SetBool ("Run", true);
 		DeselectUnit ();
     }
 
@@ -158,7 +155,7 @@ public class UnitManager : MonoBehaviour {
 		if (!actionQueue.Contains (aggressor)) {
 			actionQueue.Add (aggressor);
 		} 
-		aggressor.animator.SetBool ("Melee Right Attack 03", true);
+
 		aggressor.active = false;
 		DeselectUnit ();
 	}
@@ -174,6 +171,7 @@ public class MovementObj : Actions {
 	public GridManager gridManager;
 
 	public void Process() {
+		unit.animator.SetBool ("Run", true);
 		if (Mathf.Abs(unit.transform.position.x - destination.x) < unit.transform.localScale.z * 0.1f) {
 			if (Mathf.Abs(unit.transform.position.z - destination.y) < unit.transform.localScale.z * 0.1f) {
 				unit.animator.SetBool ("Run", false);
@@ -232,6 +230,7 @@ public class CombatObj : Actions {
 	private int deathHash = Animator.StringToHash("Die");
 
 	public void Process() {
+		aggressor.animator.SetBool ("Melee Right Attack 03", true);
 		if (defender == null) {
 			aggressor.actionQueue.RemoveAt(0);
 			return;

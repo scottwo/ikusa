@@ -8,7 +8,8 @@ public class EndTurnButton : MonoBehaviour {
 
 	private bool untouched = true;
 
-	//WARNING: Something is very wrong about this. Fix it.
+	//WARNING: Something is very wrong about this. Fix it. Seems to trigger twice with every touch.
+	//Just test it and see what I mean.
 	void Start () {
 		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
 		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);

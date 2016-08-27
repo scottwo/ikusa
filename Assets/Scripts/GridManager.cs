@@ -180,4 +180,7 @@ public class GridManager : MonoBehaviour {
         return foundNode;
     }
 
+	public void CreateRandomGrid() {}
+	public void LoadPremadeGrid(int gridNumber) {}
+
 }

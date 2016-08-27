@@ -21,10 +21,6 @@ public class PlayerManager : MonoBehaviour {
 		playerList [0].isUser = true;
 	}
 
-	void Update() {
-		
-	}
-
 	public void ProcessAITurn(Player player) {
 		//Do the robot.
 		//Cycle through each player unit.
@@ -32,24 +28,19 @@ public class PlayerManager : MonoBehaviour {
 		//Move adjacent to and attack the nearest unit.
 		//Figure out how to do it only one at a time. I even added an update function to see if i could use it.
 		//So, see if you can use it.
+		//Create a list of enemies.
+		List<Unit> enemies = new List<Unit> ();
+		for (int j = 0; j < unitManager.units.Count; j++) {
+			if (unitManager.units [j].player != player) {
+				enemies.Add (unitManager.units[j]);
+			}
+		}
 		for (int i = 0; i < player.units.Count; i++) {
 			Unit unit = player.units [i];
-			//Create a list of enemies.
-			List<Unit> enemies = new List<Unit> ();
-			for (int j = 0; j < unitManager.units.Count; j++) {
-				if (unitManager.units [j] != unit && unitManager.units [j].player != unit.player) {
-					enemies.Add (unitManager.units[j]);
-				}
-			}
 			//Find the closest enemy.
 			if (enemies.Count > 0) {
 				Unit closestEnemy = enemies [0];
-				float closestDistance = Vector2.Distance (enemies [0].currentNode.coords, unit.currentNode.coords);
-				for (int j = 0; j < enemies.Count; j++) {
-					if (Vector2.Distance (enemies [j].currentNode.coords, unit.currentNode.coords) < closestDistance) {
-						closestEnemy = enemies [j];
-					}
-				}
+				enemies.Remove (closestEnemy);
 				Node nodeToMoveTo = closestEnemy.currentNode;
 				int x = (int)unit.currentNode.coords.x - (int)closestEnemy.currentNode.coords.x;
 //			int y = (int)unit.currentNode.coords.y - (int)closestEnemy.currentNode.coords.y;
@@ -69,7 +60,7 @@ public class PlayerManager : MonoBehaviour {
 				unitManager.MoveUnit (unit, nodeToMoveTo);
 				unitManager.UnitCombat (unit, closestEnemy);
 			} else {
-				//No more enemies. Game is won. Baddies win.
+				//No more heroes. Game is won. Baddies win.
 				Debug.Log("Enemies won. You lost by literally doing nothing.");
 				return;
 			}
