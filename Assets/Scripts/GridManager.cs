@@ -24,8 +24,11 @@ public class GridManager : MonoBehaviour {
 	private int xSize;
 	private int zSize;
 	private float scale = 0.025f;
+	private Vector3 adjustedPosition;
 
-	void Start () {}
+	void Start() {
+		adjustedPosition = Vector3.up;
+	}
 
 	public void GenerateGrid() {
 		CalculateScaleModifier ();
@@ -36,9 +39,9 @@ public class GridManager : MonoBehaviour {
 				randomY /= 100;
 				grid [v] = Instantiate (cube);
 				grid [v].transform.position = new Vector3 (
-					initialPosition.x + (j * scale), 
-					initialPosition.y + (grid [v].transform.localScale.y * randomY / 2), 
-					initialPosition.z + (i * scale)
+					adjustedPosition.x + (j * scale), 
+					adjustedPosition.y + (grid [v].transform.localScale.y * randomY / 2), 
+					adjustedPosition.z + (i * scale)
 				);
 				grid [v].transform.localScale = new Vector3 (scale, grid [v].transform.localScale.y * randomY, scale);
 				grid [v].coords = new Vector2 (j, i);
@@ -83,8 +86,18 @@ public class GridManager : MonoBehaviour {
 			unitScale = 1.0f;
 			break;
 		}
-		initialPosition.x += scale / 2;
-		initialPosition.z += scale / 2;
+		adjustedPosition.y = initialPosition.y;
+		adjustedPosition.x = initialPosition.x + scale / 2;
+		adjustedPosition.z = initialPosition.z + scale / 2;
+	}
+
+	public void ClearGrid() {
+		for (int i = 0; i < grid.Length; i++) {
+			Destroy (grid [i].gameObject);
+		}
+		grid = new Node[0];
+		path = null;
+		hoveringNode = null;
 	}
 
 	void Update () {

@@ -9,11 +9,15 @@ public class GameManager : MonoBehaviour {
 	public UnitManager unitManager;
 	public Game currentGame;
 
-	void Start () {
-		
+	public GameObject RightController;
+
+	void Start() {
+		gridManager.GenerateGrid ();
 	}
 
 	public void StartNewGame() {
+		unitManager.ClearUnits ();
+		gridManager.ClearGrid ();
 		gridManager.GenerateGrid ();
 		unitManager.createUnit (gridManager.findNodeByCord(0, 0), gridManager.unitScale, UnitManager.UnitType.melee, playerManager.playerList[0]);
 		unitManager.createUnit (gridManager.findNodeByCord(1, 0), gridManager.unitScale, UnitManager.UnitType.heavy_melee, playerManager.playerList[1]);
@@ -31,6 +35,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void ClearGame() {
-		
+		gridManager.ClearGrid ();
+		gridManager.GenerateGrid ();
+		unitManager.ClearUnits ();
 	}
 }

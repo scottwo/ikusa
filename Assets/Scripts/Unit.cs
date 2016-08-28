@@ -37,6 +37,7 @@ public class Unit : MonoBehaviour {
 	}
 	
 	void Update () {
+		//Move this to the UnitManager. These instances shouldn't have updates.
 		if(cube != null) {
 			cube.transform.Rotate (cubeRotation, Time.deltaTime * 120f);
 		}

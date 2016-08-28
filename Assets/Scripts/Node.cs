@@ -11,11 +11,6 @@ public class Node : MonoBehaviour {
 
 	private GameObject sphere;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-
 	public void ShowIndicator() {
 		sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		sphere.transform.position = new Vector3 (

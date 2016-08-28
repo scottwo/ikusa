@@ -9,4 +9,19 @@ public class Player : MonoBehaviour {
 	public List<Unit> units = new List<Unit>();
 	public PlayerManager playerManager;
 
+	public void NewTurn() {
+		for (int i = 0; i < units.Count; i++) {
+			units [i].active = true;
+			units [i].currentActionPoints = units [i].maxActionPoints;
+			units [i].currentMovementPoints = units [i].maxMovementPoints;
+		}
+	}
+
+	public void EndTurn() {
+		for (int i = 0; i < units.Count; i++) {
+			units [i].active = false;
+			units [i].currentActionPoints = 0;
+			units [i].currentMovementPoints = 0;
+		}
+	}
 }

@@ -34,11 +34,7 @@ public class TurnManager : MonoBehaviour {
 
 	public void NextTurn() {
 		//clean up current player's units.
-		for (int i = 0; i < currentPlayer.units.Count; i++) {
-			currentPlayer.units [i].active = false;
-			currentPlayer.units [i].currentActionPoints = 0;
-			currentPlayer.units [i].currentMovementPoints = 0;
-		}
+		currentPlayer.EndTurn();
 
 		//Change player to next player in the list and setup their units/stough.
 		int currentIndex = currentPlayer.id;
@@ -50,11 +46,7 @@ public class TurnManager : MonoBehaviour {
 		}
 
 		//Setup next player's units
-		for (int i = 0; i < currentPlayer.units.Count; i++) {
-			currentPlayer.units [i].active = true;
-			currentPlayer.units [i].currentActionPoints = currentPlayer.units[i].maxActionPoints;
-			currentPlayer.units [i].currentMovementPoints = currentPlayer.units[i].maxMovementPoints;
-		}
+		currentPlayer.NewTurn();
 
 		//If the next player is AI, let it robot around.
 		if (!currentPlayer.isUser) {
@@ -64,10 +56,6 @@ public class TurnManager : MonoBehaviour {
 
 	public void StartFirstTurn() {
 		currentPlayer = playerManager.playerList[0];
-		for (int i = 0; i < currentPlayer.units.Count; i++) {
-			currentPlayer.units [i].active = true;
-			currentPlayer.units [i].currentActionPoints = currentPlayer.units[i].maxActionPoints;
-			currentPlayer.units [i].currentMovementPoints = currentPlayer.units[i].maxMovementPoints;
-		}
+		currentPlayer.NewTurn ();
 	}
 }
