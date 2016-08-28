@@ -17,28 +17,17 @@ public class GridManager : MonoBehaviour {
 	public Size mapSize;
 	public Node hoveringNode;
 	public Node[] path;
+	public float unitScale;
 
 	private Node[] grid;
 	private float sideLength = 1.2f;
 	private int xSize;
 	private int zSize;
 	private float scale = 0.025f;
-	private float unitScale;
 
-	void Start () {
-		GenerateGrid ();
-		unitManager.createUnit (grid[0], unitScale, UnitManager.UnitType.melee, playerManager.playerList[0]);
-		unitManager.createUnit (grid[10], unitScale, UnitManager.UnitType.heavy_melee, playerManager.playerList[1]);
-		unitManager.createUnit (grid[20], unitScale, UnitManager.UnitType.ranged, playerManager.playerList[0]);
-		unitManager.createUnit (grid[30], unitScale, UnitManager.UnitType.heavy_ranged, playerManager.playerList[1]);
-		unitManager.createUnit (grid[40], unitScale, UnitManager.UnitType.mage, playerManager.playerList[0]);
-		unitManager.createUnit (grid[50], unitScale, UnitManager.UnitType.heavy_mage, playerManager.playerList[1]);
-		unitManager.createUnit (grid[60], unitScale, UnitManager.UnitType.buff_mage, playerManager.playerList[0]);
-		unitManager.createUnit (grid[61], unitScale, UnitManager.UnitType.heal_mage, playerManager.playerList[1]);
-		turnManager.StartFirstTurn ();
-	}
+	void Start () {}
 
-	void GenerateGrid() {
+	public void GenerateGrid() {
 		CalculateScaleModifier ();
 		grid = new Node[xSize * zSize];
 		for(int i = 0, v = 0; i < zSize; i++) {
@@ -160,11 +149,11 @@ public class GridManager : MonoBehaviour {
 
 	public Node findNodeByCord(int x, int z) {
 		int index = (z * xSize) + x;
-		if (index < grid.Length && index > -1) {
+		if (grid != null && index < grid.Length && index > -1) {
 			Node foundNode = grid [index];
 			return foundNode;
 		} else {
-			return grid [0];
+			return cube;
 		}
 	}
 

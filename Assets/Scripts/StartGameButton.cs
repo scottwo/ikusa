@@ -2,10 +2,10 @@
 using System.Collections;
 using VRTK;
 
-public class EndTurnButton : MonoBehaviour {
+public class StartGameButton : MonoBehaviour {
 
 	public ControllerInteract_Listener listener;
-	public TurnManager turnManager;
+	public GameManager gameManager;
 
 	private bool untouched = true;
 
@@ -27,8 +27,8 @@ public class EndTurnButton : MonoBehaviour {
 		listener.touchedObject = null;
 		untouched = true;
 	}
-		
+
 	public void WasTriggered() {
-		turnManager.NextTurn ();
+		gameManager.StartNewGame ();
 	}
 }

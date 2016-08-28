@@ -8,6 +8,8 @@ public class ControllerInteract_Listener : MonoBehaviour {
 	public PlayerManager playerManager;
 	public TurnManager turnManager;
 
+	public GameObject touchedObject;
+
 	void Start () {
 		GetComponent<VRTK_ControllerEvents>().TriggerPressed += new ControllerInteractionEventHandler(TriggerWasPulled);
 		GetComponent<VRTK_ControllerEvents>().TriggerReleased += new ControllerInteractionEventHandler(TriggerWasReleased);
@@ -35,6 +37,9 @@ public class ControllerInteract_Listener : MonoBehaviour {
 		} else {
 			unitManager.DeselectUnit ();
 		}
+//		if (touchedObject != null) {
+//			touchedObject.WasTriggered ();
+//		}
 	}
 
 	private void TriggerWasReleased(object sender, ControllerInteractionEventArgs e) {

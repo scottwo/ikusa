@@ -19,14 +19,16 @@ public class TurnManager : MonoBehaviour {
 	}
 
 	void Update () {
-		bool allInactive = true;
-		for (int i = 0; i < currentPlayer.units.Count; i++) {
-			if (currentPlayer.units [i].active) {
-				allInactive = false;
+		if (currentPlayer != null) {
+			bool allInactive = true;
+			for (int i = 0; i < currentPlayer.units.Count; i++) {
+				if (currentPlayer.units [i].active) {
+					allInactive = false;
+				}
 			}
-		}
-		if (allInactive) {
-			NextTurn ();
+			if (allInactive) {
+				NextTurn ();
+			}
 		}
 	}
 
