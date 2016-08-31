@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GridManager : MonoBehaviour {
 
@@ -24,37 +25,34 @@ public class GridManager : MonoBehaviour {
 	private int xSize;
 	private int zSize;
 	private float scale = 0.025f;
-	private Vector3 adjustedPosition;
+	private Vector3 adjustedPosition = Vector3.up;
 
-	void Start() {
-		adjustedPosition = Vector3.up;
-	}
+	void Start() {}
 
-	public void GenerateGrid() {
-		CalculateScaleModifier ();
+	public void GenerateGrid(List<GridItem> map) {
 		grid = new Node[xSize * zSize];
-		for(int i = 0, v = 0; i < zSize; i++) {
-			for (int j = 0; j < xSize; j++, v++) {
-				float randomY = Random.Range (100, 110);
-				randomY /= 100;
-				grid [v] = Instantiate (cube);
-				grid [v].transform.position = new Vector3 (
-					adjustedPosition.x + (j * scale), 
-					adjustedPosition.y + (grid [v].transform.localScale.y * randomY / 2), 
-					adjustedPosition.z + (i * scale)
-				);
-				grid [v].transform.localScale = new Vector3 (scale, grid [v].transform.localScale.y * randomY, scale);
-				grid [v].coords = new Vector2 (j, i);
-				grid [v].transform.parent = gameObject.transform;
-				grid [v].gridManager = this;
-				if (randomY < 1.05f) {
-					grid [v].GetComponent<MeshRenderer> ().material = materials [2];
-				} else if (randomY < 1.08f) {
-					grid [v].GetComponent<MeshRenderer> ().material = materials [1];
-				} else {
-					grid [v].GetComponent<MeshRenderer> ().material = materials[0];
-				}
-			}
+		for (int i = 0; i < map.Count; i++) {
+			//Instantiate each prefab here.
+//			switch (map [i].type) {
+//			case "grass":
+//				grid[i] = Instantiate(grassCube);
+//				break;
+//			case "forest":
+//				grid[i] = Instantiate(forestCube);
+//				break;
+//			case "mountain":
+//				grid[i] = Instantiate(mountainCube);
+//				break;
+//			case "desert":
+//				grid[i] = Instantiate(desertCube);
+//				break;
+//			}
+			grid [i] = Instantiate (cube);
+			grid [i].transform.position = map [i].position;
+			grid [i].transform.localScale = map [i].scale;
+			grid [i].coords = map [i].coords;
+			grid [i].transform.parent = gameObject.transform;
+			grid [i].gridManager = this;
 		}
 	}
 
@@ -182,11 +180,38 @@ public class GridManager : MonoBehaviour {
         return foundNode;
     }
 
-	public void CreateRandomGrid() {}
-	public void LoadPremadeGrid(int gridNumber) {}
+	public List<GridItem> CreateRandomGrid() {
+		List<GridItem> map = new List<GridItem> ();
+		CalculateScaleModifier ();
+		for(int i = 0, v = 0; i < zSize; i++) {
+			for (int j = 0; j < xSize; j++, v++) {
+				float randomY = Random.Range (100, 110);
+				randomY /= 100;
+				GridItem newItem = new GridItem ();
+				newItem.position = new Vector3 (
+					adjustedPosition.x + (j * scale), 
+					adjustedPosition.y + (cube.transform.localScale.y * randomY * 0.5f), 
+					adjustedPosition.z + (i * scale)
+				);
+				newItem.scale = new Vector3 (scale, cube.transform.localScale.y * randomY, scale);
+				newItem.coords = new Vector2 (j, i);
+				//Determine type.
+				map.Add(newItem);
+			}
+		}
+		//Here's where we would add mountains/water features.
+		return map;
+	}
+	public List<GridItem> LoadPremadeGrid(int gridNumber) {
+		List<GridItem> map = new List<GridItem> ();
+		return map;
+	}
 
 }
 
 public class GridItem {
-	
+	public Vector3 scale;
+	public Vector3 position;
+	public Vector2 coords;
+	public string type;
 }

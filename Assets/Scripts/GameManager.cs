@@ -14,14 +14,14 @@ public class GameManager : MonoBehaviour {
 	public bool gameInProgress = false;
 
 	void Start() {
-		gridManager.GenerateGrid ();
+		gridManager.GenerateGrid (gridManager.CreateRandomGrid());
 	}
 
 	public void StartNewGame() {
 		unitManager.ClearUnits ();
 		gridManager.ClearGrid ();
 		gridManager.mapSize = mapSize;
-		gridManager.GenerateGrid ();
+		gridManager.GenerateGrid (gridManager.CreateRandomGrid());
 		unitManager.createUnit (gridManager.findNodeByCord(0, 0), gridManager.unitScale, UnitManager.UnitType.melee, playerManager.playerList[0]);
 		unitManager.createUnit (gridManager.findNodeByCord(1, 0), gridManager.unitScale, UnitManager.UnitType.heavy_melee, playerManager.playerList[1]);
 		unitManager.createUnit (gridManager.findNodeByCord(2, 0), gridManager.unitScale, UnitManager.UnitType.ranged, playerManager.playerList[0]);
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 		gameInProgress = false;
 		unitManager.ClearUnits ();
 		gridManager.ClearGrid ();
-		gridManager.GenerateGrid ();
+		gridManager.GenerateGrid (gridManager.CreateRandomGrid());
 	}
 
 	public void EndGame(Player loser) {
