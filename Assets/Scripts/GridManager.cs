@@ -53,6 +53,15 @@ public class GridManager : MonoBehaviour {
 			grid [i].coords = map [i].coords;
 			grid [i].transform.parent = gameObject.transform;
 			grid [i].gridManager = this;
+			float randomY = Random.Range (100, 120);
+			randomY /= 100;
+			if (randomY < 1.05f) {
+				grid [i].GetComponent<MeshRenderer> ().material = materials [2];
+			} else if (randomY < 1.12f) {
+				grid [i].GetComponent<MeshRenderer> ().material = materials [1];
+			} else {
+				grid [i].GetComponent<MeshRenderer> ().material = materials[0];
+			}
 		}
 	}
 
@@ -183,17 +192,16 @@ public class GridManager : MonoBehaviour {
 	public List<GridItem> CreateRandomGrid() {
 		List<GridItem> map = new List<GridItem> ();
 		CalculateScaleModifier ();
+		List<GridRow> heightMap = GenerateHeightMap ();
 		for(int i = 0, v = 0; i < zSize; i++) {
 			for (int j = 0; j < xSize; j++, v++) {
-				float randomY = Random.Range (100, 110);
-				randomY /= 100;
 				GridItem newItem = new GridItem ();
 				newItem.position = new Vector3 (
 					adjustedPosition.x + (j * scale), 
-					adjustedPosition.y + (cube.transform.localScale.y * randomY * 0.5f), 
+					adjustedPosition.y + (heightMap [i].points [j] * 0.5f), 
 					adjustedPosition.z + (i * scale)
 				);
-				newItem.scale = new Vector3 (scale, cube.transform.localScale.y * randomY, scale);
+				newItem.scale = new Vector3 (scale, heightMap[i].points[j], scale);
 				newItem.coords = new Vector2 (j, i);
 				//Determine type.
 				map.Add(newItem);
@@ -202,11 +210,54 @@ public class GridManager : MonoBehaviour {
 		//Here's where we would add mountains/water features.
 		return map;
 	}
+
+	List<GridRow> GenerateHeightMap() {
+		List<GridRow> gridPoints = new List<GridRow> ();
+		float tallestPoint = adjustedPosition.y + (cube.transform.localScale.y * 0.5f);
+		for (int i = 0; i < zSize; i++) {
+			//Generate flat rows.
+			gridPoints.Add(new GridRow());
+			for (int j = 0; j < xSize; j++) {
+				gridPoints [i].points.Add (adjustedPosition.y + (cube.transform.localScale.y * 0.5f));
+			}
+		}
+		//Run the randomizer on it 4 times.
+		for (int i = 5; i > 0; i--) {
+			for (int j = 1; j < gridPoints.Count - 1; j++) {
+				for (int k = 1; k < gridPoints [j].points.Count - 1; k++) {
+					//Gives us the points in the middle of the three squares.
+					gridPoints[j].points[k] *= (Random.Range(90, 120) / 100);
+					if (gridPoints [j].points [k] > tallestPoint) {
+						tallestPoint = gridPoints [j].points [k];
+					}
+					gridPoints [j - 1].points [k - 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+					gridPoints [j - 1].points [k] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+					gridPoints [j - 1].points [k + 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+					gridPoints [j].points [k - 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+					gridPoints [j].points [k + 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+					gridPoints [j + 1].points [k - 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+					gridPoints [j + 1].points [k] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+					gridPoints [j + 1].points [k + 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+				}
+			}
+		}
+		for (int j = 0; j < gridPoints.Count; j++) {
+			for (int k = 0; k < gridPoints [j].points.Count; k++) {
+				gridPoints [j].points [k] *= (cube.transform.localScale.y / tallestPoint);
+			}
+		}
+		return gridPoints;
+	}
+
 	public List<GridItem> LoadPremadeGrid(int gridNumber) {
 		List<GridItem> map = new List<GridItem> ();
 		return map;
 	}
 
+}
+
+public class GridRow {
+	public List<float> points = new List<float> ();
 }
 
 public class GridItem {
