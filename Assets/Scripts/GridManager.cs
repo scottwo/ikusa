@@ -35,7 +35,7 @@ public class GridManager : MonoBehaviour {
 		grid = new Node[xSize * zSize];
 		for(int i = 0, v = 0; i < zSize; i++) {
 			for (int j = 0; j < xSize; j++, v++) {
-				float randomY = Random.Range (100, 120);
+				float randomY = Random.Range (100, 110);
 				randomY /= 100;
 				grid [v] = Instantiate (cube);
 				grid [v].transform.position = new Vector3 (
@@ -49,7 +49,7 @@ public class GridManager : MonoBehaviour {
 				grid [v].gridManager = this;
 				if (randomY < 1.05f) {
 					grid [v].GetComponent<MeshRenderer> ().material = materials [2];
-				} else if (randomY < 1.12f) {
+				} else if (randomY < 1.08f) {
 					grid [v].GetComponent<MeshRenderer> ().material = materials [1];
 				} else {
 					grid [v].GetComponent<MeshRenderer> ().material = materials[0];
@@ -185,4 +185,8 @@ public class GridManager : MonoBehaviour {
 	public void CreateRandomGrid() {}
 	public void LoadPremadeGrid(int gridNumber) {}
 
+}
+
+public class GridItem {
+	
 }

@@ -7,6 +7,7 @@ public class PlayerManager : MonoBehaviour {
 	public GridManager gridManager;
 	public UnitManager unitManager;
 	public TurnManager turnManager;
+	public GameManager gameManager;
 	public List<Player> playerList = new List<Player> ();
 	public Player player;
 	public int numOfPlayers;
@@ -19,6 +20,14 @@ public class PlayerManager : MonoBehaviour {
 			playerList.Add (newPlayer);
 		}
 		playerList [0].isUser = true;
+	}
+
+	void Update () {
+		for (int i = 0; i < playerList.Count; i++) {
+			if (playerList [i].units.Count == 0 && gameManager.gameInProgress) {
+				gameManager.EndGame (playerList[i]);
+			}
+		}
 	}
 
 	public void ProcessAITurn(Player player) {
