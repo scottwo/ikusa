@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void StartNewGame() {
-		gameInProgress = true;
 		unitManager.ClearUnits ();
 		gridManager.ClearGrid ();
 		gridManager.mapSize = mapSize;
@@ -32,6 +31,7 @@ public class GameManager : MonoBehaviour {
 		unitManager.createUnit (gridManager.findNodeByCord(6, 0), gridManager.unitScale, UnitManager.UnitType.buff_mage, playerManager.playerList[0]);
 		unitManager.createUnit (gridManager.findNodeByCord(7, 0), gridManager.unitScale, UnitManager.UnitType.heal_mage, playerManager.playerList[1]);
 		turnManager.StartFirstTurn ();
+		gameInProgress = true;
 	}
 
 	public void ResetCurrentGame() {
@@ -39,12 +39,14 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void ClearGame() {
+		gameInProgress = false;
+		unitManager.ClearUnits ();
 		gridManager.ClearGrid ();
 		gridManager.GenerateGrid ();
-		unitManager.ClearUnits ();
 	}
 
 	public void EndGame(Player loser) {
+		Debug.Log ("End game");
 		gameInProgress = false;
 		if (!loser.isUser) {
 			// Create message saying congrats you won!
@@ -59,6 +61,7 @@ public class GameManager : MonoBehaviour {
 		mapSize = newMapSize;
 		button.GetComponent<Renderer> ().material = buttonSelectedMaterial;
 		//Somehow remove the material from the other buttons. Need a reference to the buttons. MenuManager?
+		//Doesn't seem to be working anyways.
 	}
 		
 }

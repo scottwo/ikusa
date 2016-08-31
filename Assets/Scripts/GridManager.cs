@@ -136,27 +136,27 @@ public class GridManager : MonoBehaviour {
 			tempPath [index] = foundNode;
 		}
 		if (tempPath != path) {
-			bool blocked = false;
-			int blockedIndex = 0;
-			for(int k = 0; k < tempPath.Length; k++) {
-				if (tempPath [k].currentUnit != null) {
-					//TODO: implement pathfinding around the obstacle/unit.
-					blocked = true;
-					blockedIndex = k;
-					break;
-				}
-			}
-			if (blocked) {
-				path = new Node[blockedIndex + 1];
-				for(int k = 0; k <= blockedIndex; k++) {
-					path [k] = tempPath [k];
-				}
-			} else {
+//			bool blocked = false;
+//			int blockedIndex = 0;
+//			for(int k = 0; k < tempPath.Length; k++) {
+//				if (tempPath [k].currentUnit != null) {
+//					//TODO: implement pathfinding around the obstacle/unit.
+//					blocked = true;
+//					blockedIndex = k;
+//					break;
+//				}
+//			}
+//			if (blocked) {
+//				path = new Node[blockedIndex + 1];
+//				for(int k = 0; k <= blockedIndex; k++) {
+//					path [k] = tempPath [k];
+//				}
+//			} else {
 				path = tempPath;
 				for (int k = 0; k < path.Length; k++) {
 					path [k].ShowIndicator ();
 				}
-			}
+//			}
 		}
 	}
 

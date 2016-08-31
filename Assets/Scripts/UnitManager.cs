@@ -162,16 +162,10 @@ public class UnitManager : MonoBehaviour {
 
 	public void ClearUnits() {
 		//Remove all units.
+		selectedUnit = null;
+		touchedUnit = null;
+		actionQueue = new List<Unit> ();
 		for(int i = 0; i < units.Count; i++) {
-			if(selectedUnit == units[i]) {
-				selectedUnit = null;
-			}
-			if(touchedUnit == units[i]) {
-				touchedUnit = null;
-			}
-			if (actionQueue.Contains (units[i])) {
-				actionQueue.Remove (units[i]);
-			}
 			units[i].currentNode.currentUnit = null;
 			units[i].player.units.Remove (units[i]);
 			Destroy (units[i].gameObject);

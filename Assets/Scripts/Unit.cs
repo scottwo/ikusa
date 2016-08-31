@@ -9,13 +9,15 @@ public class Unit : MonoBehaviour {
 	public UnitManager unitManager;
 	public PlayerManager playerManager;
 	public TurnManager turnManager;
-	public bool isBeingTouched;
-	public bool isSelected;
+	public bool isBeingTouched = false;
+	public bool isSelected = false;
 	public Node currentNode;
 	public Animator animator;
 	public Player player;
 	public List<Actions> actionQueue = new List<Actions>();
 	public bool isRanged;
+	public int maxHP;
+	public int currentHP;
 	public int maxMovementPoints;
 	public int currentMovementPoints;
 	public int maxActionPoints;
@@ -25,12 +27,9 @@ public class Unit : MonoBehaviour {
 	private GameObject cube;
 	private Color cubeSelectedColor = Color.red;
 	private Renderer cubeRendar;
-	private Vector3 cubeRotation;
+	private Vector3 cubeRotation = new Vector3 (1.0f, 1.0f, 1.0f);
 
 	void Start () {
-		isBeingTouched = false;
-		isSelected = false;
-		cubeRotation = new Vector3 (1.0f, 1.0f, 1.0f);
 		animator = GetComponent<Animator> ();
 		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
 		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
