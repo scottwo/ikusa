@@ -25,7 +25,7 @@ public class GridManager : MonoBehaviour {
 	private int xSize;
 	private int zSize;
 	private float scale = 0.025f;
-	private Vector3 adjustedPosition = Vector3.up;
+	public Vector3 adjustedPosition = Vector3.up;
 
 	void Start() {}
 
@@ -243,7 +243,7 @@ public class GridManager : MonoBehaviour {
 		}
 		for (int j = 0; j < gridPoints.Count; j++) {
 			for (int k = 0; k < gridPoints [j].points.Count; k++) {
-				gridPoints [j].points [k] *= (cube.transform.localScale.y / tallestPoint);
+				gridPoints [j].points [k] *= (cube.transform.localScale.y * 2.0f / tallestPoint);
 			}
 		}
 		return gridPoints;

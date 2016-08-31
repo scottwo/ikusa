@@ -39,13 +39,13 @@ public class MovementObj : Actions {
 		if (coord == "x") {
 			movement = new Vector3 (
 				unit.transform.position.x + unit.transform.localScale.z * 0.1f * posneg,
-				unit.transform.position.y,
+				gridManager.findNodeByCordFloat(unit.transform.position).transform.position.y,
 				unit.transform.position.z
 			);
 		} else {
 			movement = new Vector3 (
 				unit.transform.position.x,
-				unit.transform.position.y,
+				gridManager.findNodeByCordFloat(unit.transform.position).transform.position.y,
 				unit.transform.position.z + unit.transform.localScale.z * 0.1f * posneg
 			);
 		}
