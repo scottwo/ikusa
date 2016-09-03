@@ -198,7 +198,7 @@ public class GridManager : MonoBehaviour {
 				GridItem newItem = new GridItem ();
 				newItem.position = new Vector3 (
 					adjustedPosition.x + (j * scale), 
-					adjustedPosition.y + (heightMap [i].points [j] * 0.5f), 
+					adjustedPosition.y, 
 					adjustedPosition.z + (i * scale)
 				);
 				newItem.scale = new Vector3 (scale, heightMap[i].points[j], scale);
@@ -237,7 +237,6 @@ public class GridManager : MonoBehaviour {
 
 					gridPoints[middleX].points[middleY] = ((ne + se + sw + nw) / 4) * RandomValue(between);
 
-					Debug.Log (RandomValue (between));
 					//What are the diamond points for these middle points?
 					gridPoints [middleX].points [middleY + (between / 2)] = ((nw + ne) / 2) * RandomValue (between / 2);
 					gridPoints [middleX].points [middleY - (between / 2)] = ((sw + se) / 2) * RandomValue (between / 2);
@@ -255,12 +254,9 @@ public class GridManager : MonoBehaviour {
 		return gridPoints;
 	}
 
-	public void SetValue(Vector2 coords, float value) {
-		
-	}
-
-	float RandomValue(int scale) {
-		return Random.value + (0.1f * scale / dsSteps);
+	float RandomValue(int stepScale) {
+		float randomValue = Random.Range (100 - (stepScale * 5 * (33 / xSize)), 100 + (stepScale * 5 * (33 / xSize)));
+		return randomValue / 100;
 	}
 
 	public List<GridItem> LoadPremadeGrid(int gridNumber) {
