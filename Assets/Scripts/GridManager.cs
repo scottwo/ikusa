@@ -13,7 +13,7 @@ public class GridManager : MonoBehaviour {
 	public Vector3 initialPosition;
 	public enum Size
 	{
-		small, medium, large, huge
+		small, medium, large
 	};
 	public Size mapSize;
 	public Node hoveringNode;
@@ -26,6 +26,7 @@ public class GridManager : MonoBehaviour {
 	private int zSize;
 	private float scale = 0.025f;
 	public Vector3 adjustedPosition = Vector3.up;
+	private int dsSteps;
 
 	void Start() {}
 
@@ -68,29 +69,28 @@ public class GridManager : MonoBehaviour {
 	void CalculateScaleModifier() {
 		switch (mapSize) {
 		case Size.small:
-			scale = sideLength / 8;
-			xSize = zSize = 8;
+			scale = sideLength / 9;
+			xSize = zSize = 9;
 			unitScale = 2.0f;
+			dsSteps = 3;
 			break;
 		case Size.medium:
-			scale = sideLength / 16;
-			xSize = zSize = 16;
+			scale = sideLength / 17;
+			xSize = zSize = 17;
 			unitScale = 1.0f;
+			dsSteps = 4;
 			break;
 		case Size.large:
-			scale = sideLength / 24;
-			xSize = zSize = 24;
-			unitScale = 0.75f;
-			break;
-		case Size.huge:
-			scale = sideLength / 32;
-			xSize = zSize = 32;
+			scale = sideLength / 33;
+			xSize = zSize = 33;
 			unitScale = 0.5f;
+			dsSteps = 5;
 			break;
 		default:
-			scale = sideLength / 8;
-			xSize = zSize = 8;
+			scale = sideLength / 9;
+			xSize = zSize = 9;
 			unitScale = 1.0f;
+			dsSteps = 3;
 			break;
 		}
 		adjustedPosition.y = initialPosition.y;
@@ -221,32 +221,46 @@ public class GridManager : MonoBehaviour {
 				gridPoints [i].points.Add (adjustedPosition.y + (cube.transform.localScale.y * 0.5f));
 			}
 		}
-		//Run the randomizer on it 4 times.
-		for (int i = 5; i > 0; i--) {
-			for (int j = 1; j < gridPoints.Count - 1; j++) {
-				for (int k = 1; k < gridPoints [j].points.Count - 1; k++) {
-					//Gives us the points in the middle of the three squares.
-					gridPoints[j].points[k] *= (Random.Range(90, 120) / 100);
-					if (gridPoints [j].points [k] > tallestPoint) {
-						tallestPoint = gridPoints [j].points [k];
-					}
-					gridPoints [j - 1].points [k - 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
-					gridPoints [j - 1].points [k] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
-					gridPoints [j - 1].points [k + 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
-					gridPoints [j].points [k - 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
-					gridPoints [j].points [k + 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
-					gridPoints [j + 1].points [k - 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
-					gridPoints [j + 1].points [k] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
-					gridPoints [j + 1].points [k + 1] = gridPoints [j].points [k] + (Random.Range (100, 110) / 100);
+		//Run diamondSquare as many times as we need to for the size of the map.
+		for(int i = 0, v = 0; i < dsSteps; i++) {
+			int between = (int)Mathf.Pow (2, dsSteps - i);
+			for (int j = 0; j < Mathf.Pow (2, i); j++) {
+				for (int k = 0; k < Mathf.Pow (2, i); k++, v+=5) {
+					int middleX = Mathf.FloorToInt (xSize / Mathf.Pow(2, i + 1)) + between * j;
+					int middleY = Mathf.FloorToInt (xSize / Mathf.Pow(2, i + 1)) + between * k;
+
+					//Now, do square step on this x, y.
+					float ne = gridPoints[middleX + (between / 2)].points[middleY + (between / 2)];
+					float se = gridPoints[middleX + (between / 2)].points[middleY - (between / 2)];
+					float sw = gridPoints[middleX - (between / 2)].points[middleY - (between / 2)];
+					float nw = gridPoints[middleX - (between / 2)].points[middleY + (between / 2)];
+
+					gridPoints[middleX].points[middleY] = ((ne + se + sw + nw) / 4) * RandomValue(between);
+
+					Debug.Log (RandomValue (between));
+					//What are the diamond points for these middle points?
+					gridPoints [middleX].points [middleY + (between / 2)] = ((nw + ne) / 2) * RandomValue (between / 2);
+					gridPoints [middleX].points [middleY - (between / 2)] = ((sw + se) / 2) * RandomValue (between / 2);
+					gridPoints [middleX + (between / 2)].points [middleY] = ((se + ne) / 2) * RandomValue (between / 2);
+					gridPoints [middleX - (between / 2)].points [middleY] = ((nw + sw) / 2) * RandomValue (between / 2);
 				}
 			}
 		}
+		//Scale everything back down
 		for (int j = 0; j < gridPoints.Count; j++) {
 			for (int k = 0; k < gridPoints [j].points.Count; k++) {
 				gridPoints [j].points [k] *= (cube.transform.localScale.y * 2.0f / tallestPoint);
 			}
 		}
 		return gridPoints;
+	}
+
+	public void SetValue(Vector2 coords, float value) {
+		
+	}
+
+	float RandomValue(int scale) {
+		return Random.value + (0.1f * scale / dsSteps);
 	}
 
 	public List<GridItem> LoadPremadeGrid(int gridNumber) {
