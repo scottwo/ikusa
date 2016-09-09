@@ -13,12 +13,13 @@ public class GridManager : MonoBehaviour {
 	public Vector3 initialPosition;
 	public enum Size
 	{
-		small, medium, large
+		small, medium, large, huge
 	};
 	public Size mapSize;
 	public Node hoveringNode;
 	public Node[] path;
 	public float unitScale;
+	public float heightVariation;
 
 	private Node[] grid;
 	private float sideLength = 1.2f;
@@ -56,9 +57,9 @@ public class GridManager : MonoBehaviour {
 			grid [i].gridManager = this;
 			float randomY = Random.Range (100, 120);
 			randomY /= 100;
-			if (randomY < 1.05f) {
+			if (map[i].scale.y < 0.07f) {
 				grid [i].GetComponent<MeshRenderer> ().material = materials [2];
-			} else if (randomY < 1.12f) {
+			} else if (map[i].scale.y < 0.1f) {
 				grid [i].GetComponent<MeshRenderer> ().material = materials [1];
 			} else {
 				grid [i].GetComponent<MeshRenderer> ().material = materials[0];
@@ -85,6 +86,12 @@ public class GridManager : MonoBehaviour {
 			xSize = zSize = 33;
 			unitScale = 0.5f;
 			dsSteps = 5;
+			break;
+		case Size.huge:
+			scale = sideLength / 65;
+			xSize = zSize = 65;
+			unitScale = 0.25f;
+			dsSteps = 6;
 			break;
 		default:
 			scale = sideLength / 9;
@@ -183,8 +190,8 @@ public class GridManager : MonoBehaviour {
 		float z = pos.z;
 		float minX = initialPosition.x - (scale / 2);
 		float minZ = initialPosition.z - (scale / 2);
-		int xCoord = (int) (( x - minX) / scale) + 1;
-		int zCoord = (int) (( z - minZ) / scale) + 1;
+		int xCoord = (int) (( x - minX) / scale);
+		int zCoord = (int) (( z - minZ) / scale);
 		Node foundNode = findNodeByCord(xCoord, zCoord);
         return foundNode;
     }
@@ -193,12 +200,37 @@ public class GridManager : MonoBehaviour {
 		List<GridItem> map = new List<GridItem> ();
 		CalculateScaleModifier ();
 		List<GridRow> heightMap = GenerateHeightMap ();
+
+		//Simulate moisture/rain.
+		//Random base amount for all points (Determines climate)
+		//Added amounts for orthographic rain stuff. 
+		//Randomly generate a wind direction.
+		//Start from that direction and add moisture if the next node is higher than the current node
+		//and add even more as the elevation increases.
+		//Generate another heightmap for drainage.
+		//Nodes can only keep up to 1x drainage. If they have more it has to flow to the neighbor node.
+		//If node has double moisture than drainage, then it's river.
+		//Nodes can only take 2x drainage. Anything over that overflows into neighbor nodes.
+		//Loop through all nodes. If moisture is greater than drainage, then it flows.
+		//Have it flow into lowest neighbor (Add lowest neighbor and overflow into queue to be processed).
+		//If lowest neighbor is higher elevation, don't add unless double drainage.
+		//If double drainage, becomes lake/pond. If more than double drainage, leaks into lowest neighbor even if higher.
+		//Loop through queue until it's empty.
+
+		//Over 2x drainage:
+		//If there is a lower elevation neighbor node, send the overflow there.
+
+		//If it's the lowest elevation, it's a pond that can grow into a lake. 
+		//Water overflows to the lowest neighbor and the lake height raises to the neighbor's height.
+		//If there's still overflow, it keeps overflowing into lowest height neighbor squares until
+		//it reaches one that it doesn't reach 1x its drainage.
+
 		for(int i = 0, v = 0; i < zSize; i++) {
 			for (int j = 0; j < xSize; j++, v++) {
 				GridItem newItem = new GridItem ();
 				newItem.position = new Vector3 (
 					adjustedPosition.x + (j * scale), 
-					adjustedPosition.y, 
+					adjustedPosition.y + (heightMap[i].points[j] * 0.5f) - 0.05f, 
 					adjustedPosition.z + (i * scale)
 				);
 				newItem.scale = new Vector3 (scale, heightMap[i].points[j], scale);
@@ -251,11 +283,12 @@ public class GridManager : MonoBehaviour {
 				gridPoints [j].points [k] *= (cube.transform.localScale.y * 2.0f / tallestPoint);
 			}
 		}
+
 		return gridPoints;
 	}
 
 	float RandomValue(int stepScale) {
-		float randomValue = Random.Range (100 - (stepScale * 5 * (33 / xSize)), 100 + (stepScale * 5 * (33 / xSize)));
+		float randomValue = Random.Range (100 - (stepScale * heightVariation), 100 + (stepScale * heightVariation));
 		return randomValue / 100;
 	}
 
