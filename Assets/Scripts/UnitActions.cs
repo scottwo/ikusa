@@ -36,16 +36,17 @@ public class MovementObj : Actions {
 
 	void UpdateUnitPosition(Unit unit, string coord, int posneg, int direction) {
 		Vector3 movement = Vector3.up;
+		Node currentNode = gridManager.findNodeByCordFloat (unit.transform.position);
 		if (coord == "x") {
 			movement = new Vector3 (
 				unit.transform.position.x + unit.transform.localScale.z * 0.1f * posneg,
-				gridManager.findNodeByCordFloat(unit.transform.position).transform.position.y,
+				currentNode.transform.position.y + (currentNode.transform.localScale.y / 2),
 				unit.transform.position.z
 			);
 		} else {
 			movement = new Vector3 (
 				unit.transform.position.x,
-				gridManager.findNodeByCordFloat(unit.transform.position).transform.position.y,
+				currentNode.transform.position.y + (currentNode.transform.localScale.y / 2),
 				unit.transform.position.z + unit.transform.localScale.z * 0.1f * posneg
 			);
 		}
