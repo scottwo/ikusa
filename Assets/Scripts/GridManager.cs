@@ -7,7 +7,10 @@ public class GridManager : MonoBehaviour {
 	public UnitManager unitManager;
 	public PlayerManager playerManager;
 	public TurnManager turnManager;
-	public Node cube;
+	public Node plainCube;
+	public Node forestCube;
+	public Node mountainCube;
+	public Node waterCube;
 	public Material[] materials;
 	public Material selectedMaterial;
 	public Vector3 initialPosition;
@@ -35,35 +38,25 @@ public class GridManager : MonoBehaviour {
 		grid = new Node[xSize * zSize];
 		for (int i = 0; i < map.Count; i++) {
 			//Instantiate each prefab here.
-//			switch (map [i].type) {
-//			case "grass":
-//				grid[i] = Instantiate(grassCube);
-//				break;
-//			case "forest":
-//				grid[i] = Instantiate(forestCube);
-//				break;
-//			case "mountain":
-//				grid[i] = Instantiate(mountainCube);
-//				break;
-//			case "desert":
-//				grid[i] = Instantiate(desertCube);
-//				break;
-//			}
-			grid [i] = Instantiate (cube);
+			switch (map [i].type) {
+			case "water":
+				grid[i] = Instantiate(waterCube);
+				break;
+			case "plain":
+				grid[i] = Instantiate(plainCube);
+				break;
+			case "forest":
+				grid[i] = Instantiate(forestCube);
+				break;
+			case "mountain":
+				grid[i] = Instantiate(mountainCube);
+				break;
+			}
 			grid [i].transform.position = map [i].position;
 			grid [i].transform.localScale = map [i].scale;
 			grid [i].coords = map [i].coords;
 			grid [i].transform.parent = gameObject.transform;
 			grid [i].gridManager = this;
-			float randomY = Random.Range (100, 120);
-			randomY /= 100;
-			if (map[i].scale.y < 0.07f) {
-				grid [i].GetComponent<MeshRenderer> ().material = materials [2];
-			} else if (map[i].scale.y < 0.1f) {
-				grid [i].GetComponent<MeshRenderer> ().material = materials [1];
-			} else {
-				grid [i].GetComponent<MeshRenderer> ().material = materials[0];
-			}
 		}
 	}
 
@@ -180,7 +173,7 @@ public class GridManager : MonoBehaviour {
 			Node foundNode = grid [index];
 			return foundNode;
 		} else {
-			return cube;
+			return grid [0];
 		}
 	}
 
@@ -224,7 +217,11 @@ public class GridManager : MonoBehaviour {
 		//Water overflows to the lowest neighbor and the lake height raises to the neighbor's height.
 		//If there's still overflow, it keeps overflowing into lowest height neighbor squares until
 		//it reaches one that it doesn't reach 1x its drainage.
-
+		GridItem highest;
+		GridItem lowest;
+		GridItem middle = new GridItem ();
+		middle.position = adjustedPosition;
+		highest = lowest = middle;
 		for(int i = 0, v = 0; i < zSize; i++) {
 			for (int j = 0; j < xSize; j++, v++) {
 				GridItem newItem = new GridItem ();
@@ -236,7 +233,32 @@ public class GridManager : MonoBehaviour {
 				newItem.scale = new Vector3 (scale, heightMap[i].points[j], scale);
 				newItem.coords = new Vector2 (j, i);
 				//Determine type.
+				if(newItem.position.y > highest.position.y) {
+					highest = newItem;
+				}
+				if(newItem.position.y < lowest.position.y) {
+					lowest = newItem;
+				}
 				map.Add(newItem);
+			}
+		}
+		float mapScale = highest.scale.y - lowest.scale.y;
+		float waterHeight = lowest.scale.y + (mapScale * 0.15f);
+		float plainsHeight = lowest.scale.y + (mapScale * 0.65f);
+		float forestHeight = lowest.scale.y + (mapScale * 0.8f);
+		for(int i = 0, v = 0; i < zSize; i++) {
+			for (int j = 0; j < xSize; j++, v++) {
+				if (map [v].scale.y <= waterHeight) {
+					map [v].type = "water";
+					map [v].scale.y = waterHeight;
+					map [v].position.y = adjustedPosition.y + (waterHeight * 0.5f) - 0.05f;
+				} else if (map [v].scale.y <= plainsHeight) {
+					map [v].type = "plain";
+				} else if (map [v].scale.y <= forestHeight) {
+					map [v].type = "forest";
+				} else {
+					map [v].type = "mountain";
+				}
 			}
 		}
 		//Here's where we would add mountains/water features.
@@ -245,12 +267,12 @@ public class GridManager : MonoBehaviour {
 
 	List<GridRow> GenerateHeightMap() {
 		List<GridRow> gridPoints = new List<GridRow> ();
-		float tallestPoint = adjustedPosition.y + (cube.transform.localScale.y * 0.5f);
+		float tallestPoint = adjustedPosition.y + (plainCube.transform.localScale.y * 0.5f);
 		for (int i = 0; i < zSize; i++) {
 			//Generate flat rows.
 			gridPoints.Add(new GridRow());
 			for (int j = 0; j < xSize; j++) {
-				gridPoints [i].points.Add (adjustedPosition.y + (cube.transform.localScale.y * 0.5f));
+				gridPoints [i].points.Add (adjustedPosition.y + (plainCube.transform.localScale.y * 0.5f));
 			}
 		}
 		//Run diamondSquare as many times as we need to for the size of the map.
@@ -280,7 +302,7 @@ public class GridManager : MonoBehaviour {
 		//Scale everything back down
 		for (int j = 0; j < gridPoints.Count; j++) {
 			for (int k = 0; k < gridPoints [j].points.Count; k++) {
-				gridPoints [j].points [k] *= (cube.transform.localScale.y * 2.0f / tallestPoint);
+				gridPoints [j].points [k] *= (plainCube.transform.localScale.y * 2.0f / tallestPoint);
 			}
 		}
 
