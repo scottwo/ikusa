@@ -331,3 +331,10 @@ public class GridItem {
 	public Vector2 coords;
 	public string type;
 }
+	
+[System.Serializable]
+public class Grid
+{
+	public List<GridItem> gridPoints;
+	public GridManager.Size mapSize;
+}

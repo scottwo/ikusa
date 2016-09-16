@@ -16,6 +16,7 @@ public class Unit : MonoBehaviour {
 	public Player player;
 	public List<Actions> actionQueue = new List<Actions>();
 	public bool isRanged;
+	public int maxRange;
 	public int maxHP;
 	public int currentHP;
 	public int maxMovementPoints;
@@ -23,6 +24,7 @@ public class Unit : MonoBehaviour {
 	public int maxActionPoints;
 	public int currentActionPoints;
 	public bool active;
+	public int baseDamage;
 
 	private GameObject cube;
 	private Color cubeSelectedColor = Color.red;
