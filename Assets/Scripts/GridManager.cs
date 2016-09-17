@@ -146,15 +146,11 @@ public class GridManager : MonoBehaviour {
 		} else {
 			List<Node> neighbors = FindNeighborNodes (start.current);
 			nextBest.parent = start.current;
-			nextBest.current = neighbors [0];
-			nextBest.g = start.g + 1;
-			nextBest.h = (int) Math.Abs(end.coords.x - neighbors[0].coords.x) + (int) Math.Abs(end.coords.y - neighbors[0].coords.y);
-			nextBest.f = nextBest.g + nextBest.h;
 			for (int i = 0; i < neighbors.Count; i++) {
 				int g = start.g + 1;
 				int h = (int) Math.Abs(end.coords.x - neighbors[i].coords.x) + (int) Math.Abs(end.coords.y - neighbors[i].coords.y);
 				int f = g + h;
-				if (f < nextBest.f) {
+				if (nextBest.f == null || f < nextBest.f && nextBest.f == null || neighbors[i].currentUnit == null) {
 					nextBest.current = neighbors [i];
 					nextBest.f = f;
 					nextBest.g = g;
