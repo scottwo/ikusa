@@ -89,8 +89,8 @@ public class UnitManager : MonoBehaviour {
 	public void MoveUnit(Unit unit, Node node) {
 		if(node.currentUnit != null){
 			if(node.currentUnit.player != unit.player) {
-				if (gridManager.path != null && gridManager.path.Length > 1) {
-					this.MoveUnit (unit, gridManager.path [gridManager.path.Length - 2]);
+				if (gridManager.path != null && gridManager.path.Count > 1) {
+					this.MoveUnit (unit, gridManager.path [gridManager.path.Count - 2]);
 				}
 				this.UnitCombat (unit, node.currentUnit);
 			}

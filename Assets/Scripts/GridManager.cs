@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -20,7 +21,7 @@ public class GridManager : MonoBehaviour {
 	};
 	public Size mapSize;
 	public Node hoveringNode;
-	public Node[] path;
+	public List<Node> path;
 	public float unitScale;
 	public float heightVariation;
 
@@ -117,7 +118,7 @@ public class GridManager : MonoBehaviour {
 
 	public void RemovePath() {
 		if (path != null) {
-			for (int k = 0; k < path.Length; k++) {
+			for (int k = 0; k < path.Count; k++) {
 				path [k].HideIndicator ();
 			}
 		}
@@ -125,46 +126,60 @@ public class GridManager : MonoBehaviour {
 	}
 
 	public void DrawPath() {
-		Node start = unitManager.selectedUnit.currentNode;
-		int xDiff = Mathf.Abs ((int)hoveringNode.coords.x - (int)start.coords.x);
-		int zDiff = Mathf.Abs ((int)hoveringNode.coords.y - (int)start.coords.y);
-		int xDirection = hoveringNode.coords.x - start.coords.x > 0 ? 1 : -1;
-		int zDirection = hoveringNode.coords.y - start.coords.y > 0 ? 1 : -1;
-
-		Node[] tempPath = new Node[xDiff + zDiff];
-		for (int i = 1; i <= xDiff; i++) {
-			Node foundNode = findNodeByCord ((int)start.coords.x + i * xDirection, (int)start.coords.y);
-			int index = i - 1;
-			tempPath [index] = foundNode;
-		}
-		for (int j = 1; j <= zDiff; j++) {
-			Node foundNode = findNodeByCord ((int)start.coords.x + xDiff * xDirection, (int)start.coords.y + j * zDirection);
-			int index = xDiff + j - 1;
-			tempPath [index] = foundNode;
-		}
+		PathfindingUnit start = new PathfindingUnit ();
+		start.current = unitManager.selectedUnit.currentNode;
+		start.g = 0;
+		List<Node> tempPath = FindPath (start, hoveringNode);
 		if (tempPath != path) {
-//			bool blocked = false;
-//			int blockedIndex = 0;
-//			for(int k = 0; k < tempPath.Length; k++) {
-//				if (tempPath [k].currentUnit != null) {
-//					//TODO: implement pathfinding around the obstacle/unit.
-//					blocked = true;
-//					blockedIndex = k;
-//					break;
-//				}
-//			}
-//			if (blocked) {
-//				path = new Node[blockedIndex + 1];
-//				for(int k = 0; k <= blockedIndex; k++) {
-//					path [k] = tempPath [k];
-//				}
-//			} else {
-				path = tempPath;
-				for (int k = 0; k < path.Length; k++) {
-					path [k].ShowIndicator ();
-				}
-//			}
+			path = tempPath;
+			for (int k = 0; k < path.Count; k++) {
+				path [k].ShowIndicator ();
+			}
 		}
+	}
+
+	public List<Node> FindPath(PathfindingUnit start, Node end) {
+		List<Node> bestPath = new List<Node> ();
+		PathfindingUnit nextBest = new PathfindingUnit ();
+		if (start.current == end) {
+			return bestPath;
+		} else {
+			List<Node> neighbors = FindNeighborNodes (start.current);
+			nextBest.parent = start.current;
+			nextBest.current = neighbors [0];
+			nextBest.g = start.g + 1;
+			nextBest.h = (int) Math.Abs(end.coords.x - neighbors[0].coords.x) + (int) Math.Abs(end.coords.y - neighbors[0].coords.y);
+			nextBest.f = nextBest.g + nextBest.h;
+			for (int i = 0; i < neighbors.Count; i++) {
+				int g = start.g + 1;
+				int h = (int) Math.Abs(end.coords.x - neighbors[i].coords.x) + (int) Math.Abs(end.coords.y - neighbors[i].coords.y);
+				int f = g + h;
+				if (f < nextBest.f) {
+					nextBest.current = neighbors [i];
+					nextBest.f = f;
+					nextBest.g = g;
+					nextBest.h = h;
+				}
+			}
+			bestPath.Add (nextBest.current);
+			return FindPath (nextBest, end);
+		}
+
+	}
+
+	public List<Node> FindNeighborNodes(Node parent) {
+		List<Node> tempNeighbors = new List<Node> ();
+		List<Node> neighbors = new List<Node> ();
+		tempNeighbors.Add (findNodeByCord((int)parent.coords.x, (int)parent.coords.y++));
+		tempNeighbors.Add (findNodeByCord((int)parent.coords.x++, (int)parent.coords.y));
+		tempNeighbors.Add (findNodeByCord((int)parent.coords.x, (int)parent.coords.y--));
+		tempNeighbors.Add (findNodeByCord((int)parent.coords.x--, (int)parent.coords.y));
+		for (int i = 0; i < tempNeighbors.Count; i++) {
+			if (tempNeighbors [i].currentUnit == null) {
+				neighbors.Add (tempNeighbors [i]);
+			}
+		}
+		return neighbors;
 	}
 
 	public Node findNodeByCord(int x, int z) {
@@ -310,7 +325,7 @@ public class GridManager : MonoBehaviour {
 	}
 
 	float RandomValue(int stepScale) {
-		float randomValue = Random.Range (100 - (stepScale * heightVariation), 100 + (stepScale * heightVariation));
+		float randomValue = UnityEngine.Random.Range (100 - (stepScale * heightVariation), 100 + (stepScale * heightVariation));
 		return randomValue / 100;
 	}
 
@@ -332,6 +347,14 @@ public class GridItem {
 	public string type;
 }
 	
+public class PathfindingUnit {
+	public int f;
+	public int g;
+	public int h;
+	public Node parent;
+	public Node current;
+}
+
 [System.Serializable]
 public class Grid
 {
