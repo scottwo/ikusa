@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
 	public TurnManager turnManager;
 	public PlayerManager playerManager;
 	public UnitManager unitManager;
+	public MenuManager menuManager;
 	public Game currentGame;
 	public GridManager.Size mapSize;
 	public GameObject RightController;
@@ -22,15 +23,7 @@ public class GameManager : MonoBehaviour {
 		gridManager.ClearGrid ();
 		gridManager.mapSize = mapSize;
 		gridManager.GenerateGrid (gridManager.CreateRandomGrid());
-		unitManager.createUnit (gridManager.findNodeByCord(0, 0), gridManager.unitScale, UnitManager.UnitType.melee, playerManager.playerList[0]);
-		unitManager.createUnit (gridManager.findNodeByCord(1, 0), gridManager.unitScale, UnitManager.UnitType.heavy_melee, playerManager.playerList[1]);
-		unitManager.createUnit (gridManager.findNodeByCord(2, 0), gridManager.unitScale, UnitManager.UnitType.ranged, playerManager.playerList[0]);
-		unitManager.createUnit (gridManager.findNodeByCord(3, 0), gridManager.unitScale, UnitManager.UnitType.heavy_ranged, playerManager.playerList[1]);
-		unitManager.createUnit (gridManager.findNodeByCord(4, 0), gridManager.unitScale, UnitManager.UnitType.mage, playerManager.playerList[0]);
-		unitManager.createUnit (gridManager.findNodeByCord(5, 0), gridManager.unitScale, UnitManager.UnitType.heavy_mage, playerManager.playerList[1]);
-		unitManager.createUnit (gridManager.findNodeByCord(6, 0), gridManager.unitScale, UnitManager.UnitType.buff_mage, playerManager.playerList[0]);
-		unitManager.createUnit (gridManager.findNodeByCord(7, 0), gridManager.unitScale, UnitManager.UnitType.heal_mage, playerManager.playerList[1]);
-		turnManager.StartFirstTurn ();
+		InitiateUnitPlacement ();
 		gameInProgress = true;
 	}
 
@@ -64,4 +57,23 @@ public class GameManager : MonoBehaviour {
 		//Doesn't seem to be working anyways.
 	}
 		
+	void InitiateUnitPlacement() {
+		int currency;
+		switch (mapSize) {
+		case GridManager.Size.small:
+			currency = 1000;
+			break;
+		case GridManager.Size.medium:
+			currency = 2000;
+			break;
+		case GridManager.Size.large:
+			currency = 3000;
+			break;
+		case GridManager.Size.huge:
+			currency = 5000;
+			break;
+		}
+		gridManager.AddPlaceableUnits ();
+		menuManager.AddUnitPlacementUI ();
+	}
 }

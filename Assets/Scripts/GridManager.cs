@@ -330,6 +330,9 @@ public class GridManager : MonoBehaviour {
 		return map;
 	}
 
+	public void AddPlaceableUnits() {
+		
+	}
 }
 
 public class GridRow {
