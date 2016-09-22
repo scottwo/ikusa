@@ -13,18 +13,19 @@ public class GameManager : MonoBehaviour {
 	public GameObject RightController;
 	public Material buttonSelectedMaterial;
 	public bool gameInProgress = false;
+	public bool placementMode = false;
 
 	void Start() {
 		gridManager.GenerateGrid (gridManager.CreateRandomGrid());
 	}
 
 	public void StartNewGame() {
+		placementMode = false;
+		gameInProgress = true;
 		unitManager.ClearUnits ();
 		gridManager.ClearGrid ();
 		gridManager.mapSize = mapSize;
 		gridManager.GenerateGrid (gridManager.CreateRandomGrid());
-		InitiateUnitPlacement ();
-		gameInProgress = true;
 	}
 
 	public void ResetCurrentGame() {
@@ -39,7 +40,6 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void EndGame(Player loser) {
-		Debug.Log ("End game");
 		gameInProgress = false;
 		if (!loser.isUser) {
 			// Create message saying congrats you won!
@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour {
 	}
 		
 	void InitiateUnitPlacement() {
+		placementMode = true;
 		int currency;
 		switch (mapSize) {
 		case GridManager.Size.small:

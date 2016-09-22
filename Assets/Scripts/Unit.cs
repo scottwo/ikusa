@@ -9,6 +9,7 @@ public class Unit : MonoBehaviour {
 	public UnitManager unitManager;
 	public PlayerManager playerManager;
 	public TurnManager turnManager;
+	public GameManager gameManager;
 	public bool isBeingTouched = false;
 	public bool isSelected = false;
 	public Node currentNode;
@@ -45,19 +46,29 @@ public class Unit : MonoBehaviour {
 	}
 
 	private void WasTouched(object sender, InteractableObjectEventArgs e) {
-		if(player == turnManager.currentPlayer && !isSelected) {
+		if (gameManager.gameInProgress) {
+			if (player == turnManager.currentPlayer && !isSelected) {
+				ShowTouchedIndicator ();
+			}
+			isBeingTouched = true;
+			unitManager.touchedUnit = this;
+		} else if (gameManager.placementMode) {
 			ShowTouchedIndicator ();
+			isBeingTouched = true;
 		}
-		isBeingTouched = true;
-		unitManager.touchedUnit = this;
 	}
 		
 	private void WasUntouched(object sender, InteractableObjectEventArgs e) {
-		if(!isSelected) {
+		if (gameManager.gameInProgress) {
+			if (!isSelected) {
+				HideIndicator ();
+			}
+			isBeingTouched = false;
+			unitManager.touchedUnit = null;
+		} else if (gameManager.placementMode) {
 			HideIndicator ();
+			isBeingTouched = false;
 		}
-		isBeingTouched = false;
-		unitManager.touchedUnit = null;
 	}
 
 
