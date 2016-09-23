@@ -32,8 +32,8 @@ public class ControllerInteract_Listener : MonoBehaviour {
 	}
 
 	private void TriggerWasPulled(object sender, ControllerInteractionEventArgs e) {
-		if (unitManager.touchedUnit != null && unitManager.touchedUnit.player == turnManager.currentPlayer) {
-			unitManager.SelectUnit (unitManager.touchedUnit, gameObject);
+		if (unitManager.touchedUnit != null) {
+			unitManager.touchedUnit.TriggerWasPulled ();
 		} else {
 			unitManager.DeselectUnit ();
 		}

@@ -45,6 +45,16 @@ public class Unit : MonoBehaviour {
 		}
 	}
 
+	public void TriggerWasPulled() {
+		if (turnManager.currentPlayer == player) {
+			if (gameManager.gameInProgress) {
+				unitManager.SelectUnit(this);
+			} else if (gameManager.placementMode) {
+				
+			}
+		}
+	}
+
 	private void WasTouched(object sender, InteractableObjectEventArgs e) {
 		if (gameManager.gameInProgress) {
 			if (player == turnManager.currentPlayer && !isSelected) {

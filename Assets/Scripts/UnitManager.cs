@@ -129,7 +129,7 @@ public class UnitManager : MonoBehaviour {
 		DeselectUnit ();
 	}
 
-	public void SelectUnit(Unit unit, GameObject controller) {
+	public void SelectUnit(Unit unit) {
 		selectedUnit = unit;
 		unit.isSelected = true;
 		unit.ShowSelectedIndicator ();
