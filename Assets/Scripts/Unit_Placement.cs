@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using VRTK;
 
 public class Unit_Placement : MonoBehaviour {
 
@@ -16,19 +15,19 @@ public class Unit_Placement : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		animator = GetComponent<Animator> ();
-		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
-		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
+//		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
+//		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
 	}
 
-	private void WasTouched(object sender, InteractableObjectEventArgs e) {
-		ShowTouchedIndicator ();
-		isBeingTouched = true;
-	}
-
-	private void WasUntouched(object sender, InteractableObjectEventArgs e) {
-		HideIndicator ();
-		isBeingTouched = false;
-	}
+//	private void WasTouched(object sender, InteractableObjectEventArgs e) {
+//		ShowTouchedIndicator ();
+//		isBeingTouched = true;
+//	}
+//
+//	private void WasUntouched(object sender, InteractableObjectEventArgs e) {
+//		HideIndicator ();
+//		isBeingTouched = false;
+//	}
 
 	public void ShowTouchedIndicator() {
 		cube = GameObject.CreatePrimitive (PrimitiveType.Cube);

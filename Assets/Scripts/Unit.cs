@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using VRTK;
 
 public class Unit : MonoBehaviour {
 
@@ -34,8 +33,8 @@ public class Unit : MonoBehaviour {
 
 	void Start () {
 		animator = GetComponent<Animator> ();
-		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
-		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
+//		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
+//		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
 	}
 	
 	void Update () {
@@ -55,31 +54,31 @@ public class Unit : MonoBehaviour {
 		}
 	}
 
-	private void WasTouched(object sender, InteractableObjectEventArgs e) {
-		if (gameManager.gameInProgress) {
-			if (player == turnManager.currentPlayer && !isSelected) {
-				ShowTouchedIndicator ();
-			}
-			isBeingTouched = true;
-			unitManager.touchedUnit = this;
-		} else if (gameManager.placementMode) {
-			ShowTouchedIndicator ();
-			isBeingTouched = true;
-		}
-	}
-		
-	private void WasUntouched(object sender, InteractableObjectEventArgs e) {
-		if (gameManager.gameInProgress) {
-			if (!isSelected) {
-				HideIndicator ();
-			}
-			isBeingTouched = false;
-			unitManager.touchedUnit = null;
-		} else if (gameManager.placementMode) {
-			HideIndicator ();
-			isBeingTouched = false;
-		}
-	}
+//	private void WasTouched(object sender, InteractableObjectEventArgs e) {
+//		if (gameManager.gameInProgress) {
+//			if (player == turnManager.currentPlayer && !isSelected) {
+//				ShowTouchedIndicator ();
+//			}
+//			isBeingTouched = true;
+//			unitManager.touchedUnit = this;
+//		} else if (gameManager.placementMode) {
+//			ShowTouchedIndicator ();
+//			isBeingTouched = true;
+//		}
+//	}
+//		
+//	private void WasUntouched(object sender, InteractableObjectEventArgs e) {
+//		if (gameManager.gameInProgress) {
+//			if (!isSelected) {
+//				HideIndicator ();
+//			}
+//			isBeingTouched = false;
+//			unitManager.touchedUnit = null;
+//		} else if (gameManager.placementMode) {
+//			HideIndicator ();
+//			isBeingTouched = false;
+//		}
+//	}
 
 
 	public void ShowTouchedIndicator() {

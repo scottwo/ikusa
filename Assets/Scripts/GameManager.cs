@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour {
 	public MenuManager menuManager;
 	public Game currentGame;
 	public GridManager.Size mapSize;
-	public GameObject RightController;
+//	public GameObject RightController;
 	public Material buttonSelectedMaterial;
 	public bool gameInProgress = false;
 	public bool placementMode = false;

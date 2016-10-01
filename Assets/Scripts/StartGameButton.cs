@@ -1,31 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
-using VRTK;
+//using VRTK;
 
-public class StartGameButton : MonoBehaviour, InteractableObject {
+public class StartGameButton : MonoBehaviour {
 
 	public GameManager gameManager;
-	public ControllerInteract_Listener listener;
+//	public ControllerInteract_Listener listener;
 
 	private bool untouched = true;
 
 	void Start () {
-		listener = gameManager.RightController.GetComponent<ControllerInteract_Listener> ();
-		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
-		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
+//		listener = gameManager.RightController.GetComponent<ControllerInteract_Listener> ();
+//		GetComponent<VRTK_InteractableObject>().InteractableObjectTouched += new InteractableObjectEventHandler(WasTouched);
+//		GetComponent<VRTK_InteractableObject>().InteractableObjectUntouched += new InteractableObjectEventHandler(WasUntouched);
 	}
 	
-	void WasTouched(object sender, InteractableObjectEventArgs e) {
-		if (untouched) {
-			listener.touchedObject = this;
-			untouched = false;
-		}
-	}
-
-	void WasUntouched(object sender, InteractableObjectEventArgs e) {
-		listener.touchedObject = null;
-		untouched = true;
-	}
+//	void WasTouched(object sender, InteractableObjectEventArgs e) {
+//		if (untouched) {
+//			listener.touchedObject = this;
+//			untouched = false;
+//		}
+//	}
+//
+//	void WasUntouched(object sender, InteractableObjectEventArgs e) {
+//		listener.touchedObject = null;
+//		untouched = true;
+//	}
 
 	public void WasTriggered() {
 		gameManager.StartNewGame ();
